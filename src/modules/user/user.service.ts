@@ -34,9 +34,7 @@ export class UserService {
         return await this.userRepository.save(newUser);
     }
 
-    async updateUser(id: string, updateData: UpdateUserDTO, currentUserId: string){
-        if (id != currentUserId) throw new ForbiddenException();
-
+    async updateUser(id: string, updateData: UpdateUserDTO){
         return await this.userRepository.update(id, updateData);
     }
 

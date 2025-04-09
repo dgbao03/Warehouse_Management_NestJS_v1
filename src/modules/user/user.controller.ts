@@ -33,8 +33,8 @@ export class UserController {
     @Put(":id")
     @Auth("update_user")
     @UsePipes(new ValidationPipe({ whitelist: true }))
-    updateUser(@Body() updateData: UpdateUserDTO, @Param("id") id: string, @CurrentUser("id") currentUserId: string) {
-        return this.userService.updateUser(id, updateData, currentUserId);
+    updateUser(@Body() updateData: UpdateUserDTO, @Param("id") id: string) {
+        return this.userService.updateUser(id, updateData);
     }
 
     @Delete(":id")
