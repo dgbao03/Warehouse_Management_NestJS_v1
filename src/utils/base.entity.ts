@@ -1,5 +1,5 @@
 import { instanceToPlain } from "class-transformer";
-import { CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from "typeorm";
 
 export default class BaseEntity {
     @CreateDateColumn()
@@ -7,6 +7,9 @@ export default class BaseEntity {
 
     @UpdateDateColumn()
     updated_at: Date;
+
+    @DeleteDateColumn()
+    deleted_at: Date;
 
     static instanceToPlain(obj: any | any[]) {
         return instanceToPlain(obj);
