@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable, NotFoundException, Res } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '../jwt/jwt.service';
-import { SignInPayload } from './dtos/auth.dto';
+import { JwtService } from '../../jwt/services/jwt.service';
+import { SignInPayload } from '../dtos/auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../user/entities/user.entity';
+import { User } from '../../user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
-import { RbacService } from '../rbac/rbac.service';
+import { RbacService } from '../../rbac/services/rbac.service';
 
 @Injectable()
 export class AuthService {

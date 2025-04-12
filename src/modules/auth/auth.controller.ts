@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Res, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SignInPayload } from './dtos/auth.dto';
-import { AuthService } from './auth.service';
+import { AuthService } from './services/auth.service';
 import { Response } from 'express';
 
 @Controller('auth')

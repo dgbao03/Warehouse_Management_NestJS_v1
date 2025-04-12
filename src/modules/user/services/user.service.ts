@@ -1,11 +1,11 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserDTO } from './dtos/create-user.dto';
+import { CreateUserDTO } from '../dtos';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
+import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../auth/services/auth.service';
 import { classToPlain, instanceToPlain } from 'class-transformer';
-import { UpdateUserDTO } from './dtos/update-user.dto';
+import { UpdateUserDTO } from '../dtos';
 
 @Injectable()
 export class UserService {

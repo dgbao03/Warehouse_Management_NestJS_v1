@@ -3,7 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Observable } from 'rxjs';
 import { PERMISSIONS_KEY } from 'src/decorators/decorators.decorator';
-import { RbacService } from 'src/modules/rbac/rbac.service';
+import { RbacService } from 'src/modules/rbac/services/rbac.service';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../user/entities/user.entity';
+import { User } from '../../user/entities/user.entity';
 import { Repository } from 'typeorm';
-import { Role } from './entities/role.entity';
-import { Permission } from './entities/permission.entity';
+import { Role } from '../entities/role.entity';
+import { Permission } from '../entities/permission.entity';
 
 @Injectable()
 export class RbacService {

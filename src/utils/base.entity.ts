@@ -1,4 +1,4 @@
-import { instanceToPlain } from "class-transformer";
+import { Exclude, instanceToPlain } from "class-transformer";
 import { CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from "typeorm";
 
 export default class BaseEntity {

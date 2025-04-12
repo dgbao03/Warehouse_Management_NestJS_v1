@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { RbacService } from './rbac.service';
+import { RbacService } from './services/rbac.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
 import { Permission } from './entities/permission.entity';
