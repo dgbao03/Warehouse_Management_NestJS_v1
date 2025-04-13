@@ -16,15 +16,15 @@ export class SkuValue extends BaseEntity {
     @Column({ name: 'value_id' })
     valueId: number;
 
-    @ManyToOne(() => ProductSku, (productSku) => productSku.skuValues, { onDelete: 'CASCADE' })
+    @ManyToOne(() => ProductSku, (productSku) => productSku.skuValues)
     @JoinColumn({ name: 'sku_id' })
     productSku: ProductSku;
 
-    @ManyToOne(() => Option, (option) => option.skuValues, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Option, (option) => option.skuValues)
     @JoinColumn({ name: 'option_id' })
     option: Option;
     
-    @ManyToOne(() => OptionValue, (value) => value.skuValues, { onDelete: 'CASCADE' })
+    @ManyToOne(() => OptionValue, (value) => value.skuValues)
     @JoinColumn({ name: 'value_id' })
     optionValue: OptionValue;
 }

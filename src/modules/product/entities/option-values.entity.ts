@@ -12,7 +12,7 @@ export class OptionValue extends BaseEntity {
     @Column({ type: 'varchar',  length: 255 })
     name: string;
 
-    @ManyToOne(() => Option, (option) => option.values, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Option, (option) => option.values)
     @JoinColumn({ name: 'option_id' }) 
     option: Option;
 

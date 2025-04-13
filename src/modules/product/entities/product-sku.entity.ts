@@ -18,7 +18,7 @@ export class ProductSku extends BaseEntity {
     @Column({ default: 0 })
     stock: number;
 
-    @ManyToOne(() => Product, (product) => product.productSkus, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Product, (product) => product.productSkus)
     @JoinColumn({ name: "product_id" })
     product: Product;
 

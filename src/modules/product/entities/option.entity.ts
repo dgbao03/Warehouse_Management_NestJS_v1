@@ -13,7 +13,7 @@ export class Option extends BaseEntity {
     @Column({ type: 'varchar',  length: 255})
     name: string;
 
-    @ManyToOne(() => Product, (product) => product.options, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Product, (product) => product.options)
     @JoinColumn({ name: 'product_id' }) 
     product: Product;
 

@@ -6,39 +6,31 @@ import { Repository } from 'typeorm';
 import { AuthService } from '../../auth/services/auth.service';
 import { classToPlain, instanceToPlain } from 'class-transformer';
 import { UpdateUserDTO } from '../dtos';
+import UserRepository from '../repositories/user.repository';
 
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
-
-        private authService: AuthService
+        private userRepository: UserRepository,
     ){}
 
     async getAllUsers(){
-        return User.instanceToPlain(await this.userRepository.find());
+        return User.instanceToPlain(await this.userRepository.getAllUsers());
     }
 
     async getUserById(id: string){
-        const user = await this.userRepository.findOne({ where: { id: id }});
-
-        if(!user) throw new NotFoundException("User not found! Please try again!");
-
-        return User.instanceToPlain(user);
+        return User.instanceToPlain(await this.userRepository.getUserById(id));
     }
 
     async createUser(createData: CreateUserDTO){
-        const newUser = this.userRepository.create(createData);
-        newUser.password = this.authService.hashPassword(newUser.password);
-        return await this.userRepository.save(newUser);
+        return await this.userRepository.createUser(createData);
     }
 
     async updateUser(id: string, updateData: UpdateUserDTO){
-        return await this.userRepository.update(id, updateData);
+        return await this.userRepository.updateUser(id, updateData);
     }
 
     async deleteUser(id: string){
-        return await this.userRepository.softDelete(id);
+        return await this.userRepository.deleteUser(id);
     }
 }
