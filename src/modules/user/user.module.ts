@@ -6,10 +6,9 @@ import { User } from './entities/user.entity';
 import { AuthModule } from '../auth/auth.module';
 import { JwtModule } from '../jwt/jwt.module';
 import { RbacModule } from '../rbac/rbac.module';
-import UserRepository from './repositories/user.repository';
 
 @Module({
-  providers: [UserService, UserRepository],
+  providers: [UserService],
   controllers: [UserController],
   imports: [TypeOrmModule.forFeature([User]), AuthModule, JwtModule, RbacModule]
 })

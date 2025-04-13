@@ -51,8 +51,8 @@ export class ProductController {
     }
 
     @Get("skus/:id")
-    getSkuByCode(@Param('id') id: number) {
-        return this.productService.getSkuByCode(id);
+    getSkuById(@Param('id') id: number) {
+        return this.productService.getSkuById(id);
     }
 
     @Get(':id/options')

@@ -29,7 +29,7 @@ export class ProductService {
         private skuValueRepository: Repository<SkuValue>
     ){}
 
-    // GET METHOD //
+    // Get All Products
     async getAllProducts(options: IPaginationOptions, query?: string): Promise<Pagination<Product>> {
         const queryBuilder = this.productRepository.createQueryBuilder('product');
 
@@ -38,6 +38,7 @@ export class ProductService {
         return paginate<Product>(queryBuilder, options);
     }
 
+    // Get Product by ID
     async getProductById(id: string) {
         const product =  await this.productRepository.findOne({
             where: { id },
@@ -49,6 +50,7 @@ export class ProductService {
         return Product.instanceToPlain(product);
     }
 
+    // Get All Skus
     async getAllSkus(options: IPaginationOptions, query?: string): Promise<Pagination<ProductSku>> {
         const productSkuQueryBuilder = this.productSkuRepository
             .createQueryBuilder('productSku');
@@ -85,7 +87,8 @@ export class ProductService {
         return paginatedSkus;
     }
 
-    async getSkuByCode(id: number) {
+    // Get Sku by ID
+    async getSkuById(id: number) {
         const sku = await this.productSkuRepository.findOne({
             where: { id },
             relations: ['skuValues', 'skuValues.option', 'skuValues.optionValue']
@@ -96,6 +99,7 @@ export class ProductService {
         return ProductSku.instanceToPlain(sku);
     }
 
+    // Get Product's Options
     async getProductOptions(id: string) {
         return Product.instanceToPlain(await this.productRepository.findOne({
             where: { id },
@@ -103,6 +107,7 @@ export class ProductService {
         })) 
     }
 
+    // Get Product's Option Values
     async getProductOptionValues(productId: string, optionId: number) {
         const option = await this.optionRepository.findOne({
             where: { id: optionId, product: { id: productId } },
@@ -116,7 +121,7 @@ export class ProductService {
         return option.values;
     }
 
-    // POST METHOD //
+    // Create a Product
     async createProduct(createData: CreateProductDTO) {
         const { product_name, options } = createData;
 
@@ -138,6 +143,7 @@ export class ProductService {
         return this.productRepository.findOneBy({ id: newProduct.id });
     }
 
+    // Create a Product's Skus
     async createSku(productId: string, createData: BaseSkuDTO) {
         const { skus } = createData;
         const product = await this.productRepository.findOneBy({ id: productId }) as Product;
@@ -169,6 +175,7 @@ export class ProductService {
         }
     }
 
+    // Create a Product's Option Value
     async createOptionValue(optionId: number, createData: CreateOptionValueDTO) {
         const option = await this.optionRepository.findOneBy({ id: optionId }) as Option;
 
@@ -184,11 +191,12 @@ export class ProductService {
         }
     }
 
-    // PUT METHOD //
+    // Update a Product
     async updateProduct(id: string, updateData: UpdateProductDTO) {
         return await this.productRepository.update(id, updateData);
     }
 
+    // Update a Product's Sku
     async updateProductSku(id: number, updateData: UpdateSkuDTO) {
         const productSku = await this.productSkuRepository.findOne({ where: { id }});
 
@@ -223,7 +231,7 @@ export class ProductService {
         });
     }
 
-    // DELETE METHOD // 
+    // Soft Delete a Product
     async deleteProduct(id: string) {
         const options = await this.optionRepository.findBy({ product: { id: id }});
         for (const option of options) {
@@ -248,6 +256,7 @@ export class ProductService {
         await this.productRepository.softDelete(id);
     }
 
+    // Soft Delete a Product's Sku
     async deleteSku(id: number) {
         const skuValues = await this.skuValueRepository.findBy({ productSku: { id: id} });
 
@@ -257,6 +266,4 @@ export class ProductService {
 
         await this.productSkuRepository.softDelete(id);
     }
-
-
 }

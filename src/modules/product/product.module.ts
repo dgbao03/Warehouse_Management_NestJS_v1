@@ -12,7 +12,9 @@ import { AuthModule } from '../auth/auth.module';
 import { RbacModule } from '../rbac/rbac.module';
 
 @Module({
-  providers: [ProductService],
+  providers: [
+    ProductService
+  ],
   controllers: [ProductController],
   imports: [TypeOrmModule.forFeature([User, Product, Option, OptionValue, ProductSku, SkuValue]), AuthModule, RbacModule]
 })

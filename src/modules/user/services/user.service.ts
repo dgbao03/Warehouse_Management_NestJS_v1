@@ -6,31 +6,33 @@ import { Repository } from 'typeorm';
 import { AuthService } from '../../auth/services/auth.service';
 import { classToPlain, instanceToPlain } from 'class-transformer';
 import { UpdateUserDTO } from '../dtos';
-import UserRepository from '../repositories/user.repository';
-
 @Injectable()
 export class UserService {
     constructor(
-        private userRepository: UserRepository,
+        @InjectRepository(User)
+        private userRepository: Repository<User>,
+        private authService: AuthService
     ){}
 
     async getAllUsers(){
-        return User.instanceToPlain(await this.userRepository.getAllUsers());
+        return User.instanceToPlain(await this.userRepository.find());
     }
 
     async getUserById(id: string){
-        return User.instanceToPlain(await this.userRepository.getUserById(id));
+        return User.instanceToPlain(await this.userRepository.findOneBy({ id }));
     }
 
     async createUser(createData: CreateUserDTO){
-        return await this.userRepository.createUser(createData);
+        const newUser = this.userRepository.create(createData);
+        newUser.password = this.authService.hashPassword(newUser.password);
+        return await this.userRepository.save(newUser);
     }
 
     async updateUser(id: string, updateData: UpdateUserDTO){
-        return await this.userRepository.updateUser(id, updateData);
+        return await this.userRepository.update(id, updateData);
     }
 
     async deleteUser(id: string){
-        return await this.userRepository.deleteUser(id);
+        return await this.userRepository.softDelete(id);
     }
 }
