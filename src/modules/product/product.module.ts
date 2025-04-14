@@ -11,6 +11,7 @@ import { SkuValue } from './entities/sku-value.entity';
 import { AuthModule } from '../auth/auth.module';
 import { RbacModule } from '../rbac/rbac.module';
 import { OptionRepository, OptionValueRepository, ProductRepository, ProductSkuRepository, SkuValueRepository } from './repositories';
+import { JwtModule } from '../jwt/jwt.module';
 
 
 @Module({
@@ -23,6 +24,6 @@ import { OptionRepository, OptionValueRepository, ProductRepository, ProductSkuR
     SkuValueRepository
   ],
   controllers: [ProductController],
-  imports: [TypeOrmModule.forFeature([User, Product, Option, OptionValue, ProductSku, SkuValue]), AuthModule, RbacModule]
+  imports: [TypeOrmModule.forFeature([User, Product, Option, OptionValue, ProductSku, SkuValue]), AuthModule, RbacModule, JwtModule]
 })
 export class ProductModule {}

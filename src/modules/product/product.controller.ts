@@ -5,6 +5,7 @@ import { Product } from './entities/product.entity';
 import { ProductSku } from './entities/product-sku.entity';
 import { BaseSkuDTO, CreateOptionValueDTO, CreateProductDTO, UpdateProductDTO } from './dtos';
 import { UpdateSkuDTO } from './dtos';
+import { Auth } from 'src/decorators/decorators.decorator';
 
 @Controller('products')
 export class ProductController {
@@ -14,6 +15,7 @@ export class ProductController {
 
     // GET METHOD //
     @Get()
+    @Auth("get_all_products")
     async getAllProducts(
         @Query('search') query: string, 
         @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
@@ -30,6 +32,7 @@ export class ProductController {
     }
 
     @Get("skus")
+    @Auth("get_all_skus")
     getAllSkus(
         @Query('search') query: string, 
         @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
@@ -46,11 +49,13 @@ export class ProductController {
     }
 
     @Get(":id")
+    @Auth("get_product_by_id")
     getProductById(@Param('id') id: string) {
         return this.productService.getProductById(id);
     }
 
     @Get("skus/:id")
+    @Auth("get_sku_by_id")
     getSkuById(@Param('id') id: number) {
         return this.productService.getSkuById(id);
     }
@@ -67,18 +72,21 @@ export class ProductController {
 
     // POST METHOD //
     @Post()
+    @Auth("create_product")
     @UsePipes(new ValidationPipe())
     createProduct(@Body() createData: CreateProductDTO) {
         return this.productService.createProduct(createData);
     }
 
     @Post(':id/skus')
+    @Auth("create_product_sku")
     @UsePipes(new ValidationPipe())
     createSku(@Param('id') productId: string, @Body() createData: BaseSkuDTO) {
         return this.productService.createSku(productId, createData);
     }
 
     @Post(':productId/options/:optionId/values')
+    @Auth("create_product_option_value")
     @UsePipes(new ValidationPipe())
     createOptionValue(@Param('optionId') optionId: number, @Body() createData: CreateOptionValueDTO) {
         return this.productService.createOptionValue(optionId, createData);
@@ -86,12 +94,14 @@ export class ProductController {
 
     // PUT METHOD //
     @Put(':id')
+    @Auth("update_product")
     @UsePipes(new ValidationPipe())
     updateProduct(@Param('id') id: string, @Body() updateData: UpdateProductDTO) {
         return this.productService.updateProduct(id, updateData);
     }
 
     @Put('skus/:id')
+    @Auth("update_product_sku")
     @UsePipes(new ValidationPipe())
     updateProductSku(@Param('id') id: number, @Body() updateData: UpdateSkuDTO) {
         return this.productService.updateProductSku(id, updateData);
@@ -99,11 +109,13 @@ export class ProductController {
 
     // DELETE METHOD //
     @Delete(':id')
+    @Auth("delete_product")
     deleteProduct(@Param('id') id: string) {
         return this.productService.deleteProduct(id);
     }
 
     @Delete("/skus/:id")
+    @Auth("delete_product_sku")
     deleteSku(@Param('id') id: number) {
         return this.productService.deleteSku(id);
     }
