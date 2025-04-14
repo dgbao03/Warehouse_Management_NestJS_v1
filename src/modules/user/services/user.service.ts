@@ -6,11 +6,11 @@ import { Repository } from 'typeorm';
 import { AuthService } from '../../auth/services/auth.service';
 import { classToPlain, instanceToPlain } from 'class-transformer';
 import { UpdateUserDTO } from '../dtos';
+import UserRepository from '../repositories/user.repository';
 @Injectable()
 export class UserService {
     constructor(
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
+        private userRepository: UserRepository,
         private authService: AuthService
     ){}
 

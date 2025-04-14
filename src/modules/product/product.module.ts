@@ -10,10 +10,17 @@ import { ProductSku } from './entities/product-sku.entity';
 import { SkuValue } from './entities/sku-value.entity';
 import { AuthModule } from '../auth/auth.module';
 import { RbacModule } from '../rbac/rbac.module';
+import { OptionRepository, OptionValueRepository, ProductRepository, ProductSkuRepository, SkuValueRepository } from './repositories';
+
 
 @Module({
   providers: [
-    ProductService
+    ProductService,
+    ProductRepository,
+    OptionRepository,
+    OptionValueRepository,
+    ProductSkuRepository,
+    SkuValueRepository
   ],
   controllers: [ProductController],
   imports: [TypeOrmModule.forFeature([User, Product, Option, OptionValue, ProductSku, SkuValue]), AuthModule, RbacModule]
