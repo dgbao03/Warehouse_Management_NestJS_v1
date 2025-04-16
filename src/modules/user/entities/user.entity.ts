@@ -1,7 +1,7 @@
 import { Exclude } from "class-transformer";
 import BaseEntity from "../../../utils/base.entity";
 import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Role } from "../../rbac/entities/role.entity";
+import { Role } from "../../role/entities/role.entity";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {

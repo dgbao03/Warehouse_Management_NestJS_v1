@@ -1,27 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../../user/entities/user.entity';
-import { Repository } from 'typeorm';
-import { Role } from '../entities/role.entity';
-import { Permission } from '../entities/permission.entity';
+import RoleRepository from 'src/modules/role/repositories/role.repository';
+import PermissionRepository from 'src/modules/permission/repositories/permission.repository';
 
 @Injectable()
 export class RbacService {
     constructor(
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
-
-        @InjectRepository(Permission)
-        private readonly permissionRepository: Repository<Permission>,
+        private roleRepository: RoleRepository,
+        
+        private permissionRepository: PermissionRepository,
     ){}
 
-    async getUserRoles(userId: string): Promise<number[]> {
-        const user = await this.userRepository.findOne({
-            where: { id: userId },
-            relations: ['roles']
-        })
-
-        return user ? user.roles.map(role => role.id) : [];
+    async getUserRoles(userId: string) {
+        const roles = await this.roleRepository.findBy({ users: { id: userId } });
+        return roles ? roles.map(role => role.id): [];
     }
 
     async getPermissionRoles(requestPermission: string): Promise<number[]> {

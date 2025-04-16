@@ -7,6 +7,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as path from "path";
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { RbacModule } from './modules/rbac/rbac.module';
+import { RoleModule } from './modules/role/role.module';
+import { PermissionModule } from './modules/permission/permission.module';
+import { RolePermissionModule } from './modules/role_permission/role_permission.module';
+import { ExportModule } from './modules/export/export.module';
 import typeorm from './databases/typeorm';
 
 
@@ -21,7 +25,11 @@ import typeorm from './databases/typeorm';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => (configService.get('typeorm') as TypeOrmModuleOptions)
     }),
-    RbacModule
+    RbacModule,
+    RoleModule,
+    PermissionModule,
+    RolePermissionModule,
+    ExportModule
   ],
   controllers: [],
   providers: []

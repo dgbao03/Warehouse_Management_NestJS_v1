@@ -7,6 +7,7 @@ import { AuthService } from '../../auth/services/auth.service';
 import { classToPlain, instanceToPlain } from 'class-transformer';
 import { UpdateUserDTO } from '../dtos';
 import UserRepository from '../repositories/user.repository';
+import { Role } from 'src/modules/role/entities/role.entity';
 @Injectable()
 export class UserService {
     constructor(
