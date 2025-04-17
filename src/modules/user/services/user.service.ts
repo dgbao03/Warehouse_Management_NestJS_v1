@@ -8,11 +8,15 @@ import { SignInPayload } from 'src/modules/user/dtos/sign-in.dto';
 import { JwtService } from 'src/modules/jwt/services/jwt.service';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from 'src/modules/auth/services/auth.service';
+import RoleRepository from 'src/modules/role/repositories/role.repository';
+import { Role } from 'src/modules/role/entities/role.entity';
 
 @Injectable()
 export class UserService {
     constructor(
         private userRepository: UserRepository,
+
+        private roleRepository: RoleRepository,
 
         private authService: AuthService,
 
@@ -43,6 +47,19 @@ export class UserService {
 
     async deleteUser(id: string){
         return await this.userRepository.softDelete(id);
+    }
+
+    async addUserRole(roleId: number, userId: string) {
+        const role = await this.roleRepository.findOne({ where: { id: roleId } });
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+
+        if (!role || !user) throw new NotFoundException("Role or Permission not found!");
+
+        return await this.roleRepository
+            .createQueryBuilder()
+            .relation(Role, 'users')
+            .of(role)
+            .add(user);
     }
 
     async signIn(payload: SignInPayload) {

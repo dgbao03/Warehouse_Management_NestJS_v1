@@ -42,6 +42,11 @@ export class UserController {
         return this.userService.updateUser(id, updateData);
     }
 
+    @Post("users-roles/:roleId/:userId")
+    addUserRole(@Param('roleId') roleId: number, @Param('userId') userId: string) {
+        return this.userService.addUserRole(roleId, userId);
+    }
+
     @Delete("users/:id")
     @Auth("delete_user")
     deleteUser(@Param("id") id: string) {

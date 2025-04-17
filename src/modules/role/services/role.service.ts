@@ -17,8 +17,13 @@ export class RoleService {
 
     async getAllRoles() {
         return await this.roleRepository.find({
-            relations: ['permissions']
+            relations: ['permissions', 'users']
         })
+    }
+
+    async getUserRoles(userId: string) {
+        const roles = await this.roleRepository.findBy({ users: { id: userId } });
+        return roles ? roles.map(role => role.id): [];
     }
 
     async createRole(createData: CreateRoleDTO) {
@@ -44,7 +49,7 @@ export class RoleService {
             await roleRepo.softDelete(id);
         })
     }
-
+    
     async addRolePermission(roleId: number, permissionId: number) {
         const role = await this.roleRepository.findOne({ where: { id: roleId } });
         const permission = await this.permissionRepository.findOne({ where: { id: permissionId } });
@@ -69,10 +74,5 @@ export class RoleService {
             .relation(Role, 'permissions')
             .of(role)
             .remove(permission);
-    }
-
-    async getUserRoles(userId: string) {
-        const roles = await this.roleRepository.findBy({ users: { id: userId } });
-        return roles ? roles.map(role => role.id): [];
     }
 }
