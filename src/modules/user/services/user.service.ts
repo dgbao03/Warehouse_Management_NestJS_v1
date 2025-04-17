@@ -53,13 +53,26 @@ export class UserService {
         const role = await this.roleRepository.findOne({ where: { id: roleId } });
         const user = await this.userRepository.findOne({ where: { id: userId } });
 
-        if (!role || !user) throw new NotFoundException("Role or Permission not found!");
+        if (!role || !user) throw new NotFoundException("Role or User not found!");
 
         return await this.roleRepository
             .createQueryBuilder()
             .relation(Role, 'users')
             .of(role)
             .add(user);
+    }
+
+    async removeUserRole(roleId: number, userId: string) {
+        const role = await this.roleRepository.findOne({ where: { id: roleId } });
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+
+        if (!role || !user) throw new NotFoundException("Role or Usser not found!");
+
+        return await this.userRepository
+            .createQueryBuilder()
+            .relation(User, 'roles')
+            .of(user)
+            .remove(role);
     }
 
     async signIn(payload: SignInPayload) {

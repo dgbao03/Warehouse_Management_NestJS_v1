@@ -53,4 +53,9 @@ export class UserController {
         return this.userService.deleteUser(id);
     }
 
+    @Delete("users-roles/:roleId/:userId")
+    removeUserRole(@Param('roleId') roleId: number, @Param('userId') userId: string) {
+        return this.userService.removeUserRole(roleId, userId);
+    }
+
 }
