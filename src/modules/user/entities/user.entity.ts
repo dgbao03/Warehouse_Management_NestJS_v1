@@ -1,7 +1,8 @@
 import { Exclude } from "class-transformer";
 import BaseEntity from "../../../utils/base.entity";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Role } from "../../role/entities/role.entity";
+import { ExportStock } from "../../export_stock/entities/export.entity";
 
 @Entity({ name: "users" })
 export class User extends BaseEntity {
@@ -28,4 +29,7 @@ export class User extends BaseEntity {
         inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' }
     })
     roles: Role[];
+
+    @OneToMany(() => ExportStock, exportStock => exportStock.user)
+    exportStocks: ExportStock[];
 }

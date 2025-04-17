@@ -3,6 +3,7 @@ import { Option } from "./option.entity";
 import BaseEntity from "../../../utils/base.entity";
 import { Product } from "./product.entity";
 import { SkuValue } from "./sku-value.entity";
+import { ExportStockDetail } from "../../export_stock/entities/export-detail.entity";
 
 @Entity({ name: 'product_skus' })
 export class ProductSku extends BaseEntity {
@@ -24,4 +25,7 @@ export class ProductSku extends BaseEntity {
 
     @OneToMany(() => SkuValue, (skuValue) => skuValue.productSku)
     skuValues: SkuValue[];
+
+    @OneToMany(() => ExportStockDetail, exportStockDetail => exportStockDetail.productSku)
+    exportStockDetails: ExportStockDetail[];
 }
