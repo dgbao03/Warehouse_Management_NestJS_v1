@@ -3,6 +3,7 @@ import { UserService } from './services/user.service';
 import { CreateUserDTO, SignInPayload } from './dtos';
 import { Auth } from 'src/decorators/decorators.decorator';
 import { UpdateUserDTO } from './dtos';
+import { DataSource } from 'typeorm';
 
 @Controller()
 export class UserController {

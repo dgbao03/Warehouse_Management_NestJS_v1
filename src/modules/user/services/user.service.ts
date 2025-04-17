@@ -10,21 +10,18 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from 'src/modules/auth/services/auth.service';
 import RoleRepository from 'src/modules/role/repositories/role.repository';
 import { Role } from 'src/modules/role/entities/role.entity';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class UserService {
     constructor(
         private userRepository: UserRepository,
-
         private roleRepository: RoleRepository,
-
         private authService: AuthService,
-
         private roleService: RoleService,
-
         private jwtService: JwtService,
-
-        private configService: ConfigService
+        private configService: ConfigService,
+        private dataSource: DataSource
     ){}
 
     async getAllUsers(){
@@ -46,7 +43,18 @@ export class UserService {
     }
 
     async deleteUser(id: string){
-        return await this.userRepository.softDelete(id);
+        return this.dataSource.transaction(async (entityManager) => {
+            const userRepo = entityManager.getRepository(User);
+
+            await userRepo
+                .createQueryBuilder()
+                .delete()
+                .from('users_roles')
+                .where('user_id = :id', { id })
+                .execute();
+                    
+            await userRepo.softDelete(id);
+        })
     }
 
     async addUserRole(roleId: number, userId: string) {
