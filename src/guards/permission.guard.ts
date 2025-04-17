@@ -3,13 +3,15 @@ import { Reflector } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Observable } from 'rxjs';
 import { PERMISSIONS_KEY } from 'src/decorators/decorators.decorator';
-import { RbacService } from 'src/modules/rbac/services/rbac.service';
+import { PermissionService } from 'src/modules/permission/services/permission.service';
+import { RoleService } from 'src/modules/role/services/role.service';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
   constructor(
-    private rbacService: RbacService,
-    private reflector: Reflector
+
+    private reflector: Reflector,
+    private permissionService: PermissionService
   ){}
 
   async canActivate(
@@ -25,7 +27,7 @@ export class PermissionGuard implements CanActivate {
 
     const userRoles = request.user.roles;
 
-    const allowRoles = await this.rbacService.getPermissionRoles(requiredPermissions);
+    const allowRoles = await this.permissionService.getPermissionRoles(requiredPermissions);
 
     const hasPermission = userRoles.some(userRole =>
       allowRoles.includes(userRole),

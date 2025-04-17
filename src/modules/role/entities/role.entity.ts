@@ -1,5 +1,5 @@
 import BaseEntity from "../../../utils/base.entity";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Permission } from "../../permission/entities/permission.entity";
 import { User } from "../../user/entities/user.entity";
 

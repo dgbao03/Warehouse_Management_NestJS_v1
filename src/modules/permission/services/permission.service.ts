@@ -8,6 +8,17 @@ export class PermissionService {
     ){}
 
     async getAllPermissions() {
-        return await this.permissionRepository.find();
+        return await this.permissionRepository.find({
+            relations: ['roles']
+        });
+    }
+
+    async getPermissionRoles(requestPermission: string): Promise<number[]> {
+        const permission = await this.permissionRepository.findOne({
+            where: { name: requestPermission },
+            relations: ['roles']
+        });
+
+        return permission ? permission.roles.map(role => role.id) : [];
     }
 }

@@ -1,43 +1,48 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './services/user.service';
-import { CreateUserDTO } from './dtos';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { Auth, CurrentUser, Permissions } from 'src/decorators/decorators.decorator';
+import { CreateUserDTO, SignInPayload } from './dtos';
+import { Auth } from 'src/decorators/decorators.decorator';
 import { UpdateUserDTO } from './dtos';
 
-@Controller('users')
+@Controller()
 export class UserController {
     constructor(
         private userService: UserService
     ){}
 
-    @Get()
+    @Post('sign-in')
+    @UsePipes(new ValidationPipe())
+    signIn(@Body() payload: SignInPayload) {
+        return this.userService.signIn(payload);
+    }
+
+    @Get("users")
     @Auth("get_all_users")
     getAllUsers(){
         return this.userService.getAllUsers();
     }
 
-    @Get(":id")
+    @Get("users/:id")
     @Auth("get_user_by_id")
     getUserById(@Param('id') id: string){
         return this.userService.getUserById(id);
     }
 
-    @Post()
+    @Post("users")
     @Auth("create_user")
     @UsePipes(new ValidationPipe({ whitelist: true }))
     createUser(@Body() createData: CreateUserDTO) {
         return this.userService.createUser(createData);
     }
 
-    @Put(":id")
+    @Put("users/:id")
     @Auth("update_user")
     @UsePipes(new ValidationPipe({ whitelist: true }))
     updateUser(@Body() updateData: UpdateUserDTO, @Param("id") id: string) {
         return this.userService.updateUser(id, updateData);
     }
 
-    @Delete(":id")
+    @Delete("users/:id")
     @Auth("delete_user")
     deleteUser(@Param("id") id: string) {
         return this.userService.deleteUser(id);

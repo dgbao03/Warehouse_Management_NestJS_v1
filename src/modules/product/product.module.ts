@@ -8,10 +8,10 @@ import { Option } from './entities/option.entity';
 import { OptionValue } from './entities/option-values.entity';
 import { ProductSku } from './entities/product-sku.entity';
 import { SkuValue } from './entities/sku-value.entity';
-import { AuthModule } from '../auth/auth.module';
-import { RbacModule } from '../rbac/rbac.module';
 import { OptionRepository, OptionValueRepository, ProductRepository, ProductSkuRepository, SkuValueRepository } from './repositories';
 import { JwtModule } from '../jwt/jwt.module';
+import { RoleModule } from '../role/role.module';
+import { PermissionModule } from '../permission/permission.module';
 
 
 @Module({
@@ -24,6 +24,6 @@ import { JwtModule } from '../jwt/jwt.module';
     SkuValueRepository
   ],
   controllers: [ProductController],
-  imports: [TypeOrmModule.forFeature([User, Product, Option, OptionValue, ProductSku, SkuValue]), AuthModule, RbacModule, JwtModule]
+  imports: [TypeOrmModule.forFeature([User, Product, Option, OptionValue, ProductSku, SkuValue]), JwtModule, RoleModule, PermissionModule]
 })
 export class ProductModule {}

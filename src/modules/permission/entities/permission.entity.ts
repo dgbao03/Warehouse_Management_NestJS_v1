@@ -1,5 +1,5 @@
 import BaseEntity from "../../../utils/base.entity";
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Role } from "../../role/entities/role.entity";
 
 @Entity({ name: "permissions"})
