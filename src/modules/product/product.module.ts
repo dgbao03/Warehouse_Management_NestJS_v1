@@ -24,6 +24,7 @@ import { PermissionModule } from '../permission/permission.module';
     SkuValueRepository
   ],
   controllers: [ProductController],
-  imports: [TypeOrmModule.forFeature([User, Product, Option, OptionValue, ProductSku, SkuValue]), JwtModule, RoleModule, PermissionModule]
+  imports: [TypeOrmModule.forFeature([User, Product, Option, OptionValue, ProductSku, SkuValue]), JwtModule, RoleModule, PermissionModule],
+  exports: [ProductSkuRepository]
 })
 export class ProductModule {}

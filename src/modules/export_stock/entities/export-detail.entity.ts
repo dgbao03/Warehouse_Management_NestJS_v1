@@ -11,11 +11,11 @@ export class ExportStockDetail extends BaseEntity {
     @PrimaryColumn({ name: 'sku_id' })
     skuId: number;
 
-    @Column()
-    quantity: number;
+    @Column({ name: 'export_quantity' })
+    exportQuantity: number;
 
-    @Column()
-    price: number;
+    @Column({ name: 'export_price' })
+    exportPrice: number;
 
     @ManyToOne(() => ProductSku, productSku => productSku.exportStockDetails)
     @JoinColumn({ name: 'sku_id' })
