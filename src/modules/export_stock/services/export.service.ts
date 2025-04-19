@@ -9,6 +9,7 @@ import { ExportStockDetail } from '../entities/export-detail.entity';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import UserRepository from 'src/modules/user/repositories/user.repository';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class ExportService {
@@ -22,8 +23,12 @@ export class ExportService {
         @InjectQueue('inventory_queue') private inventoryQueue: Queue
     ){}
 
-    async getAllExports() {
-        return await this.exportStockRepository.find();
+    async getAllExports(options: IPaginationOptions, query?: string): Promise<Pagination<ExportStock>> {
+        const queryBuilder = this.exportStockRepository.createQueryBuilder('export');
+
+        if (query) queryBuilder.where('LOWER(export.id::text) LIKE :query', { query: `%${query}%` });
+
+        return paginate<ExportStock>(queryBuilder, options);
     }
 
     async getExportById(id: string) {
