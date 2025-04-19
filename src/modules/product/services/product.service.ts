@@ -2,8 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product, Option, ProductSku, SkuValue, OptionValue } from '../entities';
 import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 import { BaseSkuDTO, CreateOptionValueDTO, CreateProductDTO, UpdateProductDTO, UpdateSkuDTO } from '../dtos';
-import { ProductRepository, OptionRepository, OptionValueRepository, ProductSkuRepository, SkuValueRepository } from '../repositories';
+import { ProductRepository, OptionRepository, OptionValueRepository, ProductSkuRepository } from '../repositories';
 import { DataSource, EntityManager, In } from 'typeorm';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class ProductService {
@@ -15,8 +17,6 @@ export class ProductService {
         private optionValueRepository: OptionValueRepository,
 
         private productSkuRepository: ProductSkuRepository,
-
-        private skuValueRepository: SkuValueRepository,
 
         private dataSource: DataSource
     ){}
@@ -197,7 +197,6 @@ export class ProductService {
             }
 
             return await productSkuRepo.findOne({ where: { id }, relations: ['skuValues', 'skuValues.option', 'skuValues.optionValue'] });
-            
         })
     }
 

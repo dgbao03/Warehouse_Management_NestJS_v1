@@ -12,7 +12,7 @@ export class CreateExportStockDTO {
     exportStockDetails: ExportStockDetailDTO[];
 }
 
-class ExportStockDetailDTO {
+export class ExportStockDetailDTO {
     @IsNotEmpty()
     @Transform(({ value }) => Number(value)) 
     skuId: number;

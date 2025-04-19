@@ -1,23 +1,25 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ExportStockRepository } from '../repositories/export.repository';
 import { CreateExportStockDTO, UpdateExportStockDTO } from '../dtos';
-import UserRepository from '../../user/repositories/user.repository';
-import { ProductSkuRepository } from 'src/modules/product/repositories';
-import { ExportStockDetailRepository } from '../repositories/export-detail.repository';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { User } from 'src/modules/user/entities/user.entity';
 import { ProductSku } from 'src/modules/product/entities';
 import { ExportStock } from '../entities/export.entity';
 import { ExportStockDetail } from '../entities/export-detail.entity';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+import UserRepository from 'src/modules/user/repositories/user.repository';
 
 @Injectable()
 export class ExportService {
     constructor(
         private exportStockRepository: ExportStockRepository,
-        private exportStockDetailRepository: ExportStockDetailRepository,
+
         private userRepository: UserRepository,
-        private productSkuRepository: ProductSkuRepository,
-        private dataSource: DataSource
+
+        private dataSource: DataSource,
+
+        @InjectQueue('inventory_queue') private inventoryQueue: Queue
     ){}
 
     async getAllExports() {
@@ -42,43 +44,32 @@ export class ExportService {
     }
 
     async createExport(createData: CreateExportStockDTO){
-        return this.dataSource.transaction(async (entityManager) => {
-            const userRepo = entityManager.getRepository(User);
-            const productSkuRepo = entityManager.getRepository(ProductSku);
-            const exportStockRepo = entityManager.getRepository(ExportStock);
-            const exportStockDetailRepo = entityManager.getRepository(ExportStockDetail);
+        const currentUser = await this.userRepository.findOneBy({ id: createData.userId });
+        if (!currentUser) throw new BadRequestException("User not found! Please try again!");
 
-            const currentUser = await userRepo.findOneBy({ id: createData.userId });
-            if (!currentUser) throw new BadRequestException("User not found! Please try again!");
-    
-            const newExportStock = exportStockRepo.create({
-                user: currentUser,
-                description: createData.description
-            })
-    
-            const savedExport = await exportStockRepo.save(newExportStock);
-    
-            for (const exportStockDetail of createData.exportStockDetails) {
-                const sku = await productSkuRepo.findOneBy({ id: exportStockDetail.skuId });
-                if (!sku) throw new BadRequestException(`Product Sku with ID ${exportStockDetail.skuId} not found! Please try again!`);
-    
-                if(exportStockDetail.exportQuantity > sku.stock) throw new BadRequestException("Export quantity can bigger than current stock!");
-    
-                const newExportStockDetail = exportStockDetailRepo.create({
-                    exportStock: savedExport,
-                    productSku: sku,
-                    exportQuantity: exportStockDetail.exportQuantity,
-                    exportPrice: exportStockDetail.exportPrice
-                })
-    
-                sku.stock -= exportStockDetail.exportQuantity;
-                await productSkuRepo.save(sku);
-    
-                await exportStockDetailRepo.save(newExportStockDetail);
-            }
+        const newExportStock = this.exportStockRepository.create({
+            user: currentUser,
+            description: createData.description
         })
+
+        const savedExport = await this.exportStockRepository.save(newExportStock);
+
+        await this.inventoryQueue.add(
+            'create_export',
+            {
+                exportStockId: savedExport.id,
+                exportStockDetails: createData.exportStockDetails
+
+            }
+        )
+
+        return {
+            export: savedExport,
+            status: "Your request is under processing!"
+        };
     }
 
+    // No Use in Project
     async updateExport(id: string, updateData: UpdateExportStockDTO) {
         return this.dataSource.transaction(async (entityManager) => {
             const exportStockRepo = entityManager.getRepository(ExportStock);
@@ -135,6 +126,7 @@ export class ExportService {
         });
     }
     
+    // No Use in Project
     async deleteExport(id: string) {
         return this.dataSource.transaction(async (entityManager) => {
             const exportStockRepo = entityManager.getRepository(ExportStock);

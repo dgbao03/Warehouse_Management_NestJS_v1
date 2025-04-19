@@ -25,6 +25,7 @@
     "migration:revert": "npm run typeorm -- -d ./src/databases/typeorm.ts migration:revert"
   },
   "dependencies": {
+    "@nestjs/bullmq": "^11.0.2",
     "@nestjs/common": "^11.0.13",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.13",
@@ -32,6 +33,7 @@
     "@nestjs/platform-express": "^11.0.13",
     "@nestjs/typeorm": "^11.0.0",
     "bcrypt": "^5.1.1",
+    "bullmq": "^5.49.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.7",

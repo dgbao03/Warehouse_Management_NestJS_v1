@@ -13,7 +13,6 @@ import { JwtModule } from '../jwt/jwt.module';
 import { RoleModule } from '../role/role.module';
 import { PermissionModule } from '../permission/permission.module';
 
-
 @Module({
   providers: [
     ProductService,
@@ -24,7 +23,10 @@ import { PermissionModule } from '../permission/permission.module';
     SkuValueRepository
   ],
   controllers: [ProductController],
-  imports: [TypeOrmModule.forFeature([User, Product, Option, OptionValue, ProductSku, SkuValue]), JwtModule, RoleModule, PermissionModule],
+  imports: [
+    TypeOrmModule.forFeature([User, Product, Option, OptionValue, ProductSku, SkuValue]), 
+    JwtModule, RoleModule, PermissionModule
+  ],
   exports: [ProductSkuRepository]
 })
 export class ProductModule {}

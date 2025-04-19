@@ -24,12 +24,14 @@ export class ExportController {
         return this.exportService.createExport(createData);
     }
 
+    // No Use in Project
     @Put(":id")
     @UsePipes(new ValidationPipe())
     updateExport(@Param('id') id: string, @Body() updateData: UpdateExportStockDTO) {
         return this.exportService.updateExport(id, updateData);
     }
 
+    // No Use in Project
     @Delete(":id")
     deleteExport(@Param('id') id: string) {
         return this.exportService.deleteExport(id);
