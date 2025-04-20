@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Product, Option, ProductSku, SkuValue, OptionValue } from '../entities';
 import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 import { BaseSkuDTO, CreateOptionValueDTO, CreateProductDTO, UpdateProductDTO, UpdateSkuDTO } from '../dtos';
@@ -96,6 +96,9 @@ export class ProductService {
 
     // POST METHODs //
     async createProduct(createData: CreateProductDTO) {
+        const existedProduct = await this.productRepository.findOneBy({ name: createData.product_name });
+        if (existedProduct) throw new BadRequestException("Product already exists! Please try again!");
+
         return await this.dataSource.transaction(async (entityManager) => {
             const productRepo = entityManager.getRepository(Product);
             const optionRepo = entityManager.getRepository(Option);
@@ -133,6 +136,9 @@ export class ProductService {
             if (!product) throw new NotFoundException("Product not found! Please try again!");
 
             for (const sku of skus) {
+                const existedSku = await productSkuRepo.findOneBy({ code: sku.code });
+                if (existedSku) throw new BadRequestException(`Code: ${sku.code} already existed! Please try again!`);
+
                 const { skuValues } = sku
                 const newProductSku = productSkuRepo.create({
                     product: product,
@@ -171,10 +177,20 @@ export class ProductService {
 
     // PUT METHODs //
     async updateProduct(id: string, updateData: UpdateProductDTO) {
+        if (updateData.name){
+            const existedProduct = await this.productRepository.findOneBy({ name: updateData.name });
+            if (existedProduct) throw new BadRequestException("Product already exists! Please try again!");
+        }
+
         return await this.productRepository.update(id, updateData);
     }
 
     async updateProductSku(id: number, updateData: UpdateSkuDTO) {
+        if (updateData.code){
+            const existedSku = await this.productSkuRepository.findOneBy({ code: updateData.code });
+                if (existedSku) throw new BadRequestException(`Code: ${updateData.code} already existed! Please try again!`);
+        }
+
         return await this.dataSource.transaction(async (entityManager) => {
             const productSkuRepo = entityManager.getRepository(ProductSku);
             const skuValueRepo = entityManager.getRepository(SkuValue);

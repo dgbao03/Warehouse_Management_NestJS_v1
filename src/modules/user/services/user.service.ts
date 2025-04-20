@@ -33,6 +33,9 @@ export class UserService {
     }
 
     async createUser(createData: CreateUserDTO){
+        const existedEmail = await this.userRepository.findOneBy({ email: createData.email });
+        if (existedEmail) throw new BadRequestException("Email already exists! Please try again!");
+
         const newUser = this.userRepository.create(createData);
         newUser.password = this.authService.hashPassword(newUser.password);
 
@@ -47,6 +50,11 @@ export class UserService {
     }
 
     async updateUser(id: string, updateData: UpdateUserDTO){
+        if (updateData.email) {
+            const existedEmail = await this.userRepository.findOneBy({ email: updateData.email });
+            if (existedEmail) throw new BadRequestException("Email already exists! Please try again!");
+        }
+
         return await this.userRepository.update(id, updateData);
     }
 
