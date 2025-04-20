@@ -3,7 +3,7 @@ import { ExportService } from './services/export.service';
 import { CreateExportStockDTO, UpdateExportStockDTO } from './dtos';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { ExportStock } from './entities/export.entity';
-
+import { Auth } from "../../decorators/decorators.decorator"
 @Controller('exports')
 export class ExportController {
     constructor(
@@ -11,6 +11,7 @@ export class ExportController {
     ){}
 
     @Get()
+    @Auth("get_all_exports")
     getAllExports(
         @Query('search') query: string, 
         @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
@@ -26,11 +27,13 @@ export class ExportController {
     }
 
     @Get(":id")
+    @Auth("get_export_by_id")
     getExportById(@Param('id') id: string) {
         return this.exportService.getExportById(id);
     }
 
     @Post()
+    @Auth("create_export")
     @UsePipes(new ValidationPipe())
     createExport(@Body() createData: CreateExportStockDTO) {
         return this.exportService.createExport(createData);

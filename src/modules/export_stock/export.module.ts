@@ -6,6 +6,9 @@ import { UserModule } from '../user/user.module';
 import { ProductModule } from '../product/product.module';
 import { ExportStockDetailRepository } from './repositories/export-detail.repository';
 import { QueueModule } from '../queue/queue.module';
+import { JwtModule } from '../jwt/jwt.module';
+import { AuthModule } from '../auth/auth.module';
+import { PermissionModule } from '../permission/permission.module';
 
 @Module({
   controllers: [ExportController],
@@ -13,7 +16,9 @@ import { QueueModule } from '../queue/queue.module';
   imports: [
     UserModule, 
     ProductModule,
-    QueueModule
+    QueueModule,
+    JwtModule,
+    PermissionModule
   ],
   exports: [ExportStockRepository]
 })
