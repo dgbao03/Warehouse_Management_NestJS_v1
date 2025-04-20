@@ -1,6 +1,6 @@
 import { ExecutionContext, SetMetadata, UseGuards, applyDecorators, createParamDecorator } from '@nestjs/common';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { PermissionGuard } from 'src/guards/permission.guard';
+import { AuthGuard } from '../guards/auth.guard';
+import { PermissionGuard } from '../guards/permission.guard';
 
 export const Decorators = (...args: string[]) => SetMetadata('decorators', args);
 

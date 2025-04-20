@@ -3,7 +3,7 @@ import RoleRepository from '../repositories/role.repository';
 import { CreateRoleDTO, UpdateRoleDTO } from '../dtos';
 import { DataSource } from 'typeorm';
 import { Role } from '../entities/role.entity';
-import PermissionRepository from 'src/modules/permission/repositories/permission.repository';
+import PermissionRepository from '../../permission/repositories/permission.repository';
 
 @Injectable()
 export class RoleService {

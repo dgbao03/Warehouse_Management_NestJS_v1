@@ -3,13 +3,13 @@ import { CreateUserDTO } from '../dtos';
 import { User } from '../entities/user.entity';
 import { UpdateUserDTO } from '../dtos';
 import UserRepository from '../repositories/user.repository';
-import { RoleService } from 'src/modules/role/services/role.service';
-import { SignInPayload } from 'src/modules/user/dtos/sign-in.dto';
-import { JwtService } from 'src/modules/jwt/services/jwt.service';
+import { RoleService } from '../../role/services/role.service';
+import { SignInPayload } from '../dtos/sign-in.dto';
+import { JwtService } from '../../jwt/services/jwt.service';
 import { ConfigService } from '@nestjs/config';
-import { AuthService } from 'src/modules/auth/services/auth.service';
-import RoleRepository from 'src/modules/role/repositories/role.repository';
-import { Role } from 'src/modules/role/entities/role.entity';
+import { AuthService } from '../../auth/services/auth.service';
+import RoleRepository from '../../role/repositories/role.repository';
+import { Role } from '../../role/entities/role.entity';
 import { DataSource } from 'typeorm';
 
 @Injectable()

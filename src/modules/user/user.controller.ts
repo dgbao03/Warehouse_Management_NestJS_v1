@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './services/user.service';
 import { CreateUserDTO, SignInPayload } from './dtos';
-import { Auth } from 'src/decorators/decorators.decorator';
+import { Auth } from '../../decorators/decorators.decorator';
 import { UpdateUserDTO } from './dtos';
 import { DataSource } from 'typeorm';
 

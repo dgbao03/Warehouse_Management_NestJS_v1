@@ -11,7 +11,7 @@ import { ExportModule } from './modules/export_stock/export.module';
 import typeorm from './databases/typeorm';
 import { BullModule } from '@nestjs/bullmq';
 import { QueueModule } from './modules/queue/queue.module';
-
+import { SeedModule } from './databases/seeds/seed.module';
 
 @Module({
   imports: [UserModule, JwtModule, ProductModule,
@@ -33,7 +33,8 @@ import { QueueModule } from './modules/queue/queue.module';
     RoleModule,
     PermissionModule,
     ExportModule,
-    QueueModule
+    QueueModule,
+    SeedModule
   ],
   controllers: [],
   providers: []

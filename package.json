@@ -22,7 +22,8 @@
     "migration:run": "npm run typeorm migration:run -- -d ./src/databases/typeorm.ts",
     "migration:generate": "npm run typeorm -- -d ./src/databases/typeorm.ts migration:generate ./src/databases/migrations/$npm_config_name",
     "migration:create": "npm run typeorm -- migration:create ./src/databases/migrations/$npm_config_name",
-    "migration:revert": "npm run typeorm -- -d ./src/databases/typeorm.ts migration:revert"
+    "migration:revert": "npm run typeorm -- -d ./src/databases/typeorm.ts migration:revert",
+    "seed": "ts-node src/databases/seeds/seed.main.ts"
   },
   "dependencies": {
     "@nestjs/bullmq": "^11.0.2",
@@ -43,7 +44,8 @@
     "pg": "^8.14.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
-    "typeorm": "^0.3.22"
+    "typeorm": "^0.3.22",
+    "typeorm-extension": "^3.7.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
