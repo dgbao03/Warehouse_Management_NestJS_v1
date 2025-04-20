@@ -44,6 +44,7 @@ export class UserController {
     }
 
     @Post("users-roles/:roleId/:userId")
+    @Auth("add_user_role")
     addUserRole(@Param('roleId') roleId: number, @Param('userId') userId: string) {
         return this.userService.addUserRole(roleId, userId);
     }
@@ -55,6 +56,7 @@ export class UserController {
     }
 
     @Delete("users-roles/:roleId/:userId")
+    @Auth("delete_user_role")
     removeUserRole(@Param('roleId') roleId: number, @Param('userId') userId: string) {
         return this.userService.removeUserRole(roleId, userId);
     }

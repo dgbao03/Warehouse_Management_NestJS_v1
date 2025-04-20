@@ -65,7 +65,11 @@ export const permissions: PermissionDefinition[] = [
 
     { name: "delete_role_permission", description: "Allows removing a permission from a role" },
 
-    { name: "get_all_permissions", description: "Allows retrieving all permission data" }
+    { name: "get_all_permissions", description: "Allows retrieving all permission data" },
+
+    { name: "add_user_role", description: "Allows adding role to an user" },
+
+    { name: "delete_user_role", description: "Allows removing role of an user" }
 ];
 
 export const roles: RoleDefinition[] = [
