@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateUserDTO } from '../dtos';
 import { User } from '../entities/user.entity';
 import { UpdateUserDTO } from '../dtos';
@@ -35,6 +35,14 @@ export class UserService {
     async createUser(createData: CreateUserDTO){
         const newUser = this.userRepository.create(createData);
         newUser.password = this.authService.hashPassword(newUser.password);
+
+        const staffRole = await this.roleRepository.findOne({
+            where: { name: 'Staff' },
+        });
+
+        if(!staffRole) throw new InternalServerErrorException("Cannot attach default role (Staff) to User! Please try again!");
+
+        newUser.roles = [staffRole];
         return await this.userRepository.save(newUser);
     }
 
