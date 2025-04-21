@@ -11,6 +11,7 @@ import { AuthService } from '../../auth/services/auth.service';
 import RoleRepository from '../../role/repositories/role.repository';
 import { Role } from '../../role/entities/role.entity';
 import { DataSource } from 'typeorm';
+import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class UserService {
@@ -24,8 +25,12 @@ export class UserService {
         private dataSource: DataSource
     ){}
 
-    async getAllUsers(){
-        return User.instanceToPlain(await this.userRepository.find());
+    async getAllUsers(options: IPaginationOptions, query?: string): Promise<Pagination<User>> {
+        const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+        if (query) queryBuilder.where('LOWER(user.fullname) LIKE :query', { query: `%${query.toLowerCase()}%` });
+
+        return paginate<User>(queryBuilder, options);
     }
 
     async getUserById(id: string){

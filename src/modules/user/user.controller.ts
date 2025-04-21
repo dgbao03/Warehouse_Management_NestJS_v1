@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './services/user.service';
 import { CreateUserDTO, SignInPayload } from './dtos';
 import { Auth } from '../../decorators/decorators.decorator';
 import { UpdateUserDTO } from './dtos';
 import { DataSource } from 'typeorm';
+import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
+import { User } from './entities/user.entity';
 
 @Controller()
 export class UserController {
@@ -19,8 +21,19 @@ export class UserController {
 
     @Get("users")
     @Auth("get_all_users")
-    getAllUsers(){
-        return this.userService.getAllUsers();
+    getAllUsers(
+        @Query('search') query: string, 
+        @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+        @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 5,
+    ): Promise<Pagination<User>>{
+        limit = limit > 5 ? 5 : limit;
+        const options: IPaginationOptions = {
+            page,
+            limit,
+            route: '/users', 
+        };
+
+        return this.userService.getAllUsers(options, query);
     }
 
     @Get("users/:id")
