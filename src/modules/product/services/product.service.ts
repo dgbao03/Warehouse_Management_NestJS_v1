@@ -87,9 +87,12 @@ export class ProductService {
     }
 
     async getProductOptionValues(productId: string, optionId: number) {
+        const product = await this.productRepository.findOneBy({ id: productId });
+        if (!product) throw new BadRequestException(`Product ID not exists! Please try again!`);
+
         const option = await this.optionRepository.findOne({ where: { id: optionId, product: { id: productId } }, relations: ['values'] });
 
-        if (!option) throw new NotFoundException(`Option with ID ${optionId} not found for product ${productId}`);
+        if (!option) throw new NotFoundException(`Option with ID ${optionId} not found for product ${product.name}`);
 
         return option.values;
     }

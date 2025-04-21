@@ -12,6 +12,9 @@ import typeorm from './databases/typeorm';
 import { BullModule } from '@nestjs/bullmq';
 import { QueueModule } from './modules/queue/queue.module';
 import { SeedModule } from './databases/seeds/seed.module';
+import { MailModule } from './modules/mail/mail.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
   imports: [UserModule, JwtModule, ProductModule,
@@ -34,7 +37,36 @@ import { SeedModule } from './databases/seeds/seed.module';
     PermissionModule,
     ExportModule,
     QueueModule,
-    SeedModule
+    SeedModule,
+    MailModule,
+    MailerModule.forRootAsync({
+      imports: [ConfigModule], 
+      useFactory: async (configService: ConfigService) => ({
+        transport: {
+          host: configService.get<string>('MAIL_SERVER_HOST'),
+          port: configService.get<number>('MAIL_SERVER_PORT'),
+          secure: configService.get<boolean>('MAIL_SERVER_SECURE'), 
+          auth: {
+            user: configService.get<string>('MAIL_SERVER_USER'),
+            pass: configService.get<string>('MAIL_SERVER_PASSWORD'),
+          },
+        },
+        tls: {
+          rejectUnauthorized: false, 
+        },
+        defaults: {
+          from: `${configService.get<string>('MAIL_SERVER_FROM')}`,
+        },
+        template: {
+          dir: path.join(__dirname),
+          adapter: new HandlebarsAdapter(), 
+          options: {
+            strict: false,
+          },
+        },
+      }),
+      inject: [ConfigService],
+    })
   ],
   controllers: [],
   providers: []

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .header {
+        background-color: #7c7e7c;
+        color: white;
+        padding: 10px 0;
+        text-align: center;
+      }
+      .content {
+        margin: 20px;
+      }
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .table th, .table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      .table th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Export Stock Report</h1>
+    </div>
+
+    <div class="content">
+      <p><strong>Export Stock ID:</strong> {{exportStockData.id}}</p>
+      <p><strong>User:</strong> {{user}}</p>
+      <p><strong>Description:</strong> {{exportStockData.description}}</p>
+      <p><strong>Status:</strong> {{exportStockData.status}}</p>
+      <p><strong>Reason:</strong> {{exportStockData.reason}}</p>
+      <p><strong>Created At:</strong> {{exportStockData.created_at}}</p>
+
+      <h2>Export Stock Details</h2>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Product Code</th>
+            <th>Export Quantity</th>
+            <th>Price (per item)</th>
+            <th>Export Price (per item)</th>
+          </tr>
+        </thead>
+
+      {{#if exportStockData.exportStockDetails}}
+        <tbody>
+          {{#each exportStockData.exportStockDetails}}
+            <tr>
+              <td>{{this.productSku.code}}</td> 
+              <td>{{this.exportQuantity}}</td>  
+              <td>{{this.productSku.price}}</td>
+              <td>{{this.exportPrice}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      {{else}}
+        <tbody>
+          <tr>
+            <td colspan="4">No export details available.</td>
+          </tr>
+        </tbody>
+      {{/if}}
+
+      </table>
+    </div>
+  </body>
+</html>

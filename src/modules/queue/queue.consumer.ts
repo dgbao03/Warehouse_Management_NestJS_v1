@@ -8,6 +8,7 @@ import { ExportStockDetail } from "../export_stock/entities/export-detail.entity
 import { ExportStockDetailDTO } from "../export_stock/dtos";
 import { ExportStockRepository } from "../export_stock/repositories/export.repository";
 import { Status } from "src/utils/status.enum";
+import { MailService } from "../mail/mail.service";
 
 @Processor("inventory_queue")
 @Injectable()
@@ -15,7 +16,9 @@ export class InventoryConsumer extends WorkerHost {
     constructor(
         private dataSource: DataSource,
 
-        private exportStockRepository: ExportStockRepository
+        private exportStockRepository: ExportStockRepository,
+
+        private mailService: MailService
     ){
         super();
     }
@@ -38,7 +41,7 @@ export class InventoryConsumer extends WorkerHost {
                             if (!sku) throw new BadRequestException(`Product Sku with ID ${exportStockDetail.skuId} not found!`);
                 
                             if (exportStockDetail.exportQuantity > sku.stock){
-                                throw new BadRequestException(`Export quantity (${exportStockDetail.exportQuantity}) for ${sku.code} exceeds current stock (${sku.stock})!`);
+                                throw new BadRequestException(`Export quantity (${exportStockDetail.exportQuantity}) for ${sku.code} exceeds current stock (${sku.stock})`);
                             }
                 
                             const newExportStockDetail = exportStockDetailRepo.create({
@@ -73,11 +76,16 @@ export class InventoryConsumer extends WorkerHost {
             const { exportStockId } = job.data;
             if (!exportStockId) return "No Export ID found!";
 
-            const exportStock = await this.exportStockRepository.findOneBy({ id: exportStockId });
+            const exportStock = await this.exportStockRepository.findOne({ 
+                where: { id: exportStockId },
+                relations: ['user', 'exportStockDetails', 'exportStockDetails.productSku']
+            });
             if (exportStock){
                 exportStock.status = Status.Completed;
                 exportStock.reason = "Create Export Successful!";
                 await this.exportStockRepository.save(exportStock);
+
+                await this.mailService.sendExportEmail(exportStock);
             }
         } catch (error) {
             throw error;
@@ -90,11 +98,17 @@ export class InventoryConsumer extends WorkerHost {
             const { exportStockId } = job.data;
             if (!exportStockId) return "No Export ID found!";
 
-            const exportStock = await this.exportStockRepository.findOneBy({ id: exportStockId });
+            const exportStock = await this.exportStockRepository.findOne({ 
+                where: { id: exportStockId },
+                relations: ['user']
+            });
+
             if (exportStock){
                 exportStock.status = Status.Failed;
                 exportStock.reason = error.message;
                 await this.exportStockRepository.save(exportStock);
+
+                await this.mailService.sendExportEmail(exportStock);
             }
         } catch (error) {
             throw error;
