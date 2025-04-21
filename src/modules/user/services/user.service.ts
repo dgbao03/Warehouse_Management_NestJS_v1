@@ -34,7 +34,10 @@ export class UserService {
     }
 
     async getUserById(id: string){
-        return User.instanceToPlain(await this.userRepository.findOneBy({ id }));
+        const user = await this.userRepository.findOneBy({ id });
+        if (!user) throw new NotFoundException("User Not Found!");
+
+        return User.instanceToPlain(user);
     }
 
     async createUser(createData: CreateUserDTO){
@@ -55,6 +58,9 @@ export class UserService {
     }
 
     async updateUser(id: string, updateData: UpdateUserDTO){
+        const user =await this.userRepository.findOneBy({ id });
+        if (!user) throw new NotFoundException("User Not Found!");
+
         if (updateData.email) {
             const existedEmail = await this.userRepository.findOneBy({ email: updateData.email });
             if (existedEmail) throw new BadRequestException("Email already exists! Please try again!");
@@ -64,6 +70,9 @@ export class UserService {
     }
 
     async deleteUser(id: string){
+        const user =await this.userRepository.findOneBy({ id });
+        if (!user) throw new NotFoundException("User Not Found!");
+        
         return this.dataSource.transaction(async (entityManager) => {
             const userRepo = entityManager.getRepository(User);
 

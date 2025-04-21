@@ -83,6 +83,9 @@ export class ProductService {
     }
 
     async getProductOptions(id: string) {
+        const product = await this.productRepository.findOneBy({ id: id });
+        if (!product) throw new BadRequestException(`Product ID not exists! Please try again!`);
+
         return await this.productRepository.findOne({ where: { id }, relations: ['options'] }); 
     }
 

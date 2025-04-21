@@ -11,11 +11,8 @@ import { AuthService } from '../../..//modules/auth/services/auth.service';
 export class SeedService {
     constructor(
         private userRepository: UserRepository,
-
         private roleRepository: RoleRepository,
-
         private permissionRepository: PermissionRepository,
-
         private authService: AuthService,
     ){}
 

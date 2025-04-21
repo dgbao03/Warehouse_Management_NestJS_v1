@@ -32,8 +32,11 @@ export class ExportService {
     }
 
     async getExportById(id: string) {
+        const exportStock = await this.exportStockRepository.findOneBy({ id });
+        if (!exportStock) throw new NotFoundException("Export ID Not Found!");
+
         return await this.exportStockRepository.findOne({ where: { id: id }, relations: ['exportStockDetails', 'exportStockDetails.productSku'],
-            select: { id: true, description: true, created_at: true, updated_at: true, status: true, reason: true,
+            select: { id: true, description: true, createdAt: true, updatedAt: true, status: true, reason: true,
                 exportStockDetails: {
                     skuId: true,
                     exportStockId: true,
