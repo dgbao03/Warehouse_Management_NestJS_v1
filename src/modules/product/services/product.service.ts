@@ -126,8 +126,11 @@ export class ProductService {
                     await optionValueRepo.save(newOptionValue);
                 }
             }
-    
-            return productRepo.findOneBy({ id: newProduct.id });
+
+            return productRepo.findOne({
+                where: { id: newProduct.id },
+                relations: ["options", "options.values"]
+            });
         })
     }
 
