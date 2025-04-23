@@ -77,7 +77,7 @@ export class ProductService {
     async getSkuById(id: number) {
         const sku = await this.productSkuRepository.findOne({ where: { id }, relations: ['skuValues', 'skuValues.option', 'skuValues.optionValue'] })
 
-        if (!sku) throw new NotFoundException("Product-Code not found! Please try again!");
+        if (!sku) throw new NotFoundException("Product not found! Please try again!");
 
         return sku;
     }

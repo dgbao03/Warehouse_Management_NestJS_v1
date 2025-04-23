@@ -34,14 +34,22 @@ export class UserService {
     }
 
     async getUserById(id: string){
-        const user = await this.userRepository.findOneBy({ id });
+        const user = await this.userRepository.findOne({
+            where: { id: id },
+            relations: ['roles']
+        });
         if (!user) throw new NotFoundException("User Not Found!");
 
         return User.instanceToPlain(user);
     }
 
     async createUser(createData: CreateUserDTO){
-        const existedEmail = await this.userRepository.findOneBy({ email: createData.email });
+        const existedEmail = await this.userRepository
+            .createQueryBuilder("user")
+            .withDeleted()
+            .where("user.email = :email", { email: createData.email })
+            .getOne();
+
         if (existedEmail) throw new BadRequestException("Email already exists! Please try again!");
 
         const newUser = this.userRepository.create(createData);
