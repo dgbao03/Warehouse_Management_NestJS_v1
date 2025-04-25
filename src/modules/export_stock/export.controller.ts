@@ -33,7 +33,7 @@ export class ExportController {
     }
 
     @Post()
-    // @Auth("create_export")
+    @Auth("create_export")
     @UsePipes(new ValidationPipe())
     createExport(@Body() createData: CreateExportStockDTO) {
         return this.exportService.createExport(createData);
