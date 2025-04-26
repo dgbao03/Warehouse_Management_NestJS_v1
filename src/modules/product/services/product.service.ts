@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConsoleLogger, Injectable, NotFoundException } from '@nestjs/common';
 import { Product, Option, ProductSku, SkuValue, OptionValue } from '../entities';
 import { IPaginationOptions, Pagination, paginate } from 'nestjs-typeorm-paginate';
 import { BaseSkuDTO, CreateOptionValueDTO, CreateProductDTO, UpdateProductDTO, UpdateSkuDTO } from '../dtos';
@@ -33,7 +33,7 @@ export class ProductService {
     async getProductById(id: string) {
         const product =  await this.productRepository.findOne({
             where: { id },
-            relations: ['productSkus', 'productSkus.skuValues', 'productSkus.skuValues.option', 'productSkus.skuValues.optionValue']
+            relations: ['options', 'options.values', 'productSkus', 'productSkus.skuValues', 'productSkus.skuValues.option', 'productSkus.skuValues.optionValue']
         })
 
         if (!product) throw new NotFoundException("Product not found! Please try again!");
@@ -116,6 +116,9 @@ export class ProductService {
             await productRepo.save(newProduct);
     
             for (const option of options) {
+                const existedOption = await optionRepo.findOneBy({ name: option.option_name, product: { id: newProduct.id } });
+                if (existedOption) throw new BadRequestException(`Option with name ${option.option_name} already exists in this ${newProduct.name}! Please try again!`);
+
                 const { option_name, values } = option;
                 const newOption = optionRepo.create({ name: option_name, product: newProduct });
                 await optionRepo.save(newOption);
@@ -139,16 +142,48 @@ export class ProductService {
             const productRepo = entityManager.getRepository(Product);
             const productSkuRepo = entityManager.getRepository(ProductSku);
             const skuValueRepo = entityManager.getRepository(SkuValue);
+            const optionRepo = entityManager.getRepository(Option);
+            const optionValueRepo = entityManager.getRepository(OptionValue);
 
             const { skus } = createData;
             const product = await productRepo.findOneBy({ id: productId }) as Product;
             if (!product) throw new NotFoundException("Product not found! Please try again!");
+
+            const createdSkus: ProductSku[] = [];
 
             for (const sku of skus) {
                 const existedSku = await productSkuRepo.findOneBy({ code: sku.code });
                 if (existedSku) throw new BadRequestException(`Code: ${sku.code} already existed! Please try again!`);
 
                 const { skuValues } = sku
+
+                // Get all skus of the product
+                const existingSkus = await productSkuRepo
+                    .createQueryBuilder('sku')
+                    .innerJoinAndSelect('sku.skuValues', 'skuValue')
+                    .where('sku.product = :productId', { productId })
+                    .getMany();
+
+                // Sorted string of new sku's option-value pairs
+                const newSkuOptionValues = skuValues
+                    .map(sv => `${sv.option_id}-${sv.value_id}`)
+                    .sort()
+                    .join(',');
+
+                // Compare with each sku's option-value of the product with the new sku's option-value
+                for (const existingSku of existingSkus) {
+                    const existingOptionValues = existingSku.skuValues
+                        .map(sv => `${sv.optionId}-${sv.valueId}`)
+                        .sort()
+                        .join(',');
+
+                    if (existingOptionValues === newSkuOptionValues) {
+                        throw new BadRequestException(
+                            `A SKU with these option values already exists (SKU Code: ${existingSku.code})`
+                        );
+                    }
+                }
+
                 const newProductSku = productSkuRepo.create({
                     product: product,
                     code: sku.code,
@@ -159,6 +194,12 @@ export class ProductService {
                 await productSkuRepo.save(newProductSku);
 
                 for (const value of skuValues) {
+                    const option = await optionRepo.findOneBy({ id: value.option_id, product: { id: productId } });
+                    if (!option) throw new BadRequestException(`Option with ID ${value.option_id} not belongs to product ${product.name}`);
+
+                    const optionValue = await optionValueRepo.findOneBy({ id: value.value_id, option: { id: value.option_id} });
+                    if (!optionValue) throw new BadRequestException(`Option value with ID ${value.value_id} not belongs to option ${option.name}`);
+
                     const newSkuValue = skuValueRepo.create({
                         skuId: newProductSku.id,
                         optionId: value.option_id,
@@ -169,7 +210,12 @@ export class ProductService {
 
                     await skuValueRepo.save(newSkuValue);
                 }
+
+                const createdSku = await productSkuRepo.findOne({ where: { id: newProductSku.id }, relations: ['skuValues', 'skuValues.option', 'skuValues.optionValue'] }) as ProductSku;
+                createdSkus.push(createdSku);
             }
+
+            return createdSkus;
         })
     }
 
@@ -179,9 +225,14 @@ export class ProductService {
         if (!option) throw new NotFoundException("Option not found! Please try again!");
 
         for (const value of createData.values) {
+            const existedOptionValue = await this.optionValueRepository.findOneBy({ name: value.value_name, option: { id: optionId } });
+            if (existedOptionValue) throw new BadRequestException(`Option value with name ${value.value_name} already exists! Please try again!`);
+
             const newValue = this.optionValueRepository.create({ option: option, name: value.value_name });
             await this.optionValueRepository.save(newValue);
         }
+
+        return await this.optionRepository.findOne({ where: { id: optionId }, relations: ['values'] });
     }
 
     // PUT METHODs //
@@ -195,18 +246,21 @@ export class ProductService {
     }
 
     async updateProductSku(id: number, updateData: UpdateSkuDTO) {
-        if (updateData.code){
-            const existedSku = await this.productSkuRepository.findOneBy({ code: updateData.code });
-                if (existedSku) throw new BadRequestException(`Code: ${updateData.code} already existed! Please try again!`);
-        }
-
         return await this.dataSource.transaction(async (entityManager) => {
             const productSkuRepo = entityManager.getRepository(ProductSku);
             const skuValueRepo = entityManager.getRepository(SkuValue);
 
-            const productSku = await productSkuRepo.findOne({ where: { id }});
-
-            if (!productSku) throw new NotFoundException("Product-Sku not found! Please try again!");
+            const productSku = await productSkuRepo.findOne({ where: { id: id }, relations: ['exportStockDetails', 'product', 'skuValues'] });
+            if (productSku) {
+                if (productSku.exportStockDetails.length > 0) throw new BadRequestException(`This Variant has been exported! Cannot update information!`);
+            } else {
+                throw new NotFoundException("Product-Variant not found! Please try again!");
+            }
+    
+            if (updateData.code) {
+                const existedSkuCode = await productSkuRepo.findOneBy({ code: updateData.code });
+                if (existedSkuCode) throw new BadRequestException(`Code: ${updateData.code} already existed! Please try again!`);
+            }
 
             await productSkuRepo.update(id, {
                 code: updateData.code,
@@ -216,14 +270,45 @@ export class ProductService {
 
             if (updateData.values) {
                 for (const skuValueUpdate of updateData.values) {
-                    const skuValue = await skuValueRepo.findOneBy({ skuId: skuValueUpdate.skuId, optionId: skuValueUpdate.optionId })
-                    if (skuValue) await skuValueRepo.update( { skuId: skuValueUpdate.skuId, optionId: skuValueUpdate.optionId }, { valueId: skuValueUpdate.valueId });
+                    const option = await this.optionRepository.findOneBy({ id: skuValueUpdate.optionId, product: { id: productSku.product.id } });
+                    if (!option) throw new BadRequestException(`Option with ID ${skuValueUpdate.optionId} not belongs to product ${productSku.product.name}`);
+
+                    const optionValue = await this.optionValueRepository.findOneBy({ id: skuValueUpdate.valueId, option: { id: skuValueUpdate.optionId } });
+                    if (!optionValue) throw new BadRequestException(`Option value with ID ${skuValueUpdate.valueId} not belongs to option ${option.name} (ID: ${option.id})`);
+
+                    await skuValueRepo.update( { skuId: id, optionId: skuValueUpdate.optionId }, { valueId: skuValueUpdate.valueId });
+                }
+            }
+
+            const updateProductSku = await productSkuRepo.findOne({ where: { id: id }, relations: ['skuValues'] });
+            
+            // Check if the updated sku is already existed in the product
+            const existingSkus = await productSkuRepo
+                .createQueryBuilder('sku')
+                .innerJoinAndSelect('sku.skuValues', 'skuValue')
+                .where('sku.product = :productId AND sku.id != :skuId', {
+                    productId: productSku.product.id,
+                    skuId: id
+                }).getMany();
+
+            const updateSkuValue = updateProductSku?.skuValues.map(
+                sv => `${sv.optionId}-${sv.valueId}`
+            ).sort().join(',');
+
+            for (const existingSku of existingSkus) {
+                const existingOptionValues = existingSku.skuValues.map(
+                    sv => `${sv.optionId}-${sv.valueId}`
+                ).sort().join(',');
+                
+                if (existingOptionValues === updateSkuValue) {
+                    throw new BadRequestException(`A SKU with these option values already exists (SKU Code: ${existingSku.code})`);
                 }
             }
 
             return await productSkuRepo.findOne({ where: { id }, relations: ['skuValues', 'skuValues.option', 'skuValues.optionValue'] });
         })
     }
+
 
     // DELETE METHODs //
     async deleteProduct(id: string) {
@@ -234,11 +319,13 @@ export class ProductService {
             const productSkuRepo = entityManager.getRepository(ProductSku);
             const skuValueRepo = entityManager.getRepository(SkuValue);
 
+            const productSkus = await productSkuRepo.find({ where: { product: { id } }, relations: ['exportStockDetails'] });
+            if (productSkus.some(sku => sku.exportStockDetails.length > 0)) throw new BadRequestException(`This Product has been exported! Cannot delete information!`);
+
             const options = await optionRepo.find({ where: { product: { id } } });
             const optionIds = options.map(option => option.id);
             if (optionIds.length > 0) await optionValueRepo.softDelete({ option: { id: In(optionIds) } });
                 
-            const productSkus = await productSkuRepo.find({ where: { product: { id } } });
             const skuIds = productSkus.map(sku => sku.id);
             if (skuIds.length > 0) await skuValueRepo.softDelete({ productSku: { id: In(skuIds) } });
         

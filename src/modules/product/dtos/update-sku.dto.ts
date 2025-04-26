@@ -21,9 +21,9 @@ export class UpdateSkuDTO {
 }
 
 export class UpdateSkuValueDTO {
-    @IsNumber()
-    @IsNotEmpty()
-    skuId: number
+    // @IsNumber()
+    // @IsNotEmpty()
+    // skuId: number
 
     @IsNumber()
     @IsNotEmpty()
