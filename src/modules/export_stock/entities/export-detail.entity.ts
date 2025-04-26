@@ -1,5 +1,5 @@
 import { ProductSku } from "../../product/entities/product-sku.entity";
-import BaseEntity from "../../../utils/base.entity";
+import BaseEntity from "../../../databases/base.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { ExportStock } from "./export.entity";
 

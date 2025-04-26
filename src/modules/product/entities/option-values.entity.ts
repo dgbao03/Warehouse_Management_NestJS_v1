@@ -1,4 +1,4 @@
-import BaseEntity from "../../../utils/base.entity";
+import BaseEntity from "../../../databases/base.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { Option } from "./option.entity";
 import { SkuValue } from "./sku-value.entity";

@@ -1,4 +1,4 @@
-import BaseEntity from "../../../utils/base.entity";
+import BaseEntity from "../../../databases/base.entity";
 import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Role } from "../../role/entities/role.entity";
 

@@ -7,7 +7,7 @@ import { ExportStock } from "../export_stock/entities/export.entity";
 import { ExportStockDetail } from "../export_stock/entities/export-detail.entity";
 import { ExportStockDetailDTO } from "../export_stock/dtos";
 import { ExportStockRepository } from "../export_stock/repositories/export.repository";
-import { Status } from "src/utils/status.enum";
+import { Status } from "src/constants/status.enum";
 import { MailService } from "../mail/mail.service";
 
 @Processor("inventory_queue")

@@ -291,7 +291,7 @@ export class ProductService {
                     skuId: id
                 }).getMany();
 
-            const updateSkuValue = updateProductSku?.skuValues.map(
+            const updateSkuOptionValues = updateProductSku?.skuValues.map(
                 sv => `${sv.optionId}-${sv.valueId}`
             ).sort().join(',');
 
@@ -300,7 +300,7 @@ export class ProductService {
                     sv => `${sv.optionId}-${sv.valueId}`
                 ).sort().join(',');
                 
-                if (existingOptionValues === updateSkuValue) {
+                if (existingOptionValues === updateSkuOptionValues) {
                     throw new BadRequestException(`A SKU with these option values already exists (SKU Code: ${existingSku.code})`);
                 }
             }
@@ -308,7 +308,6 @@ export class ProductService {
             return await productSkuRepo.findOne({ where: { id }, relations: ['skuValues', 'skuValues.option', 'skuValues.optionValue'] });
         })
     }
-
 
     // DELETE METHODs //
     async deleteProduct(id: string) {

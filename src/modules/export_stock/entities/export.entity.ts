@@ -1,8 +1,8 @@
 import { User } from "../../user/entities/user.entity";
-import BaseEntity from "../../../utils/base.entity";
+import BaseEntity from "../../../databases/base.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { ExportStockDetail } from "./export-detail.entity";
-import { Status } from "../../../utils/status.enum";
+import { Status } from "../../../constants/status.enum";
 
 @Entity({ name: "export_stocks" })
 export class ExportStock extends BaseEntity {

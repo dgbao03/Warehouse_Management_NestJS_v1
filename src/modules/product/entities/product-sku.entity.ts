@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Option } from "./option.entity";
-import BaseEntity from "../../../utils/base.entity";
+import BaseEntity from "../../../databases/base.entity";
 import { Product } from "./product.entity";
 import { SkuValue } from "./sku-value.entity";
 import { ExportStockDetail } from "../../export_stock/entities/export-detail.entity";

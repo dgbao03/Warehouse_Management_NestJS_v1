@@ -1,4 +1,4 @@
-import BaseEntity from '../../../utils/base.entity';
+import BaseEntity from '../../../databases/base.entity';
 import { Entity, PrimaryColumn, ManyToOne, Column, JoinColumn } from 'typeorm';
 import { Option } from './option.entity';
 import { OptionValue } from './option-values.entity';

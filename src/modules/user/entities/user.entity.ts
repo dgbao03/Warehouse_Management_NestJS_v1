@@ -1,5 +1,5 @@
 import { Exclude } from "class-transformer";
-import BaseEntity from "../../../utils/base.entity";
+import BaseEntity from "../../../databases/base.entity";
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Role } from "../../role/entities/role.entity";
 import { ExportStock } from "../../export_stock/entities/export.entity";
