@@ -86,3 +86,76 @@ export const defaultUsers = [
         password: process.env.DEFAULT_ADMIN_PASSWORD as string
     }
 ]
+
+export const roles_permissions = [
+    { 
+        role: "Admin",
+        permissions: [
+            "get_all_users",
+            "get_user_by_id",
+            "create_user",
+            "update_user",
+            "delete_user",
+            "get_all_products",
+            "get_all_skus",
+            "get_product_by_id",
+            "get_sku_by_id",
+            "create_product_sku",
+            "create_product_option_value",
+            "update_product_sku",
+            "create_product",
+            "update_product",
+            "delete_product",
+            "delete_product_sku",
+            "get_all_exports",
+            "get_export_by_id",
+            "create_export",
+            "get_all_roles",
+            "create_role",
+            "update_role",
+            "create_role_permission",
+            "delete_role",
+            "delete_role_permission",
+            "get_all_permissions",
+            "add_user_role",
+            "delete_user_role"
+          ]
+    }, 
+
+    {
+        role: "Manager",
+        permissions: [
+            "get_all_users",
+            "get_user_by_id",
+            "get_all_products",
+            "get_all_skus",
+            "get_product_by_id",
+            "get_sku_by_id",
+            "create_product_sku",
+            "create_product_option_value",
+            "update_product_sku",
+            "create_product",
+            "update_product",
+            "delete_product",
+            "delete_product_sku",
+            "get_export_by_id",
+            "create_export",
+            "get_all_exports"
+          ]
+    },
+
+    {
+        role: "Staff",
+        permissions: [
+            "get_all_products",
+            "get_all_skus",
+            "get_product_by_id",
+            "get_sku_by_id",
+            "create_product_sku",
+            "create_product",
+            "get_export_by_id",
+            "create_export",
+            "get_all_exports"
+        ]
+    }
+]
