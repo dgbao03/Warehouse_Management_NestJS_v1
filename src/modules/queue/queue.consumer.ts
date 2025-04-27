@@ -73,19 +73,27 @@ export class InventoryConsumer extends WorkerHost {
     @OnWorkerEvent('completed')
     async onJobCompleted(job: Job) {
         try {
-            const { exportStockId } = job.data;
-            if (!exportStockId) return "No Export ID found!";
+            switch(job.name){ 
+                case 'create_export': {
+                    const { exportStockId } = job.data;
+                    if (!exportStockId) return "No Export ID found!";
 
-            const exportStock = await this.exportStockRepository.findOne({ 
-                where: { id: exportStockId },
-                relations: ['user', 'exportStockDetails', 'exportStockDetails.productSku']
-            });
-            if (exportStock){
-                exportStock.status = Status.Completed;
-                exportStock.reason = "Create Export Successful!";
-                await this.exportStockRepository.save(exportStock);
+                    const exportStock = await this.exportStockRepository.findOne({ 
+                        where: { id: exportStockId },
+                        relations: ['user', 'exportStockDetails', 'exportStockDetails.productSku']
+                    });
+                    if (exportStock){
+                        exportStock.status = Status.Completed;
+                        exportStock.reason = "Create Export Successful!";
+                        await this.exportStockRepository.save(exportStock);
 
-                await this.mailService.sendExportEmail(exportStock);
+                        await this.mailService.sendExportEmail(exportStock);
+                    }
+
+                    break;
+                }
+
+                default: throw new InternalServerErrorException("Server Error!");
             }
         } catch (error) {
             throw error;
@@ -95,20 +103,28 @@ export class InventoryConsumer extends WorkerHost {
     @OnWorkerEvent('failed')
     async onJobFailed(job: Job, error: Error) {
         try {
-            const { exportStockId } = job.data;
-            if (!exportStockId) return "No Export ID found!";
+            switch(job.name){ 
+                case 'create_export': {
+                    const { exportStockId } = job.data;
+                    if (!exportStockId) return "No Export ID found!";
 
-            const exportStock = await this.exportStockRepository.findOne({ 
-                where: { id: exportStockId },
-                relations: ['user']
-            });
+                    const exportStock = await this.exportStockRepository.findOne({ 
+                        where: { id: exportStockId },
+                        relations: ['user']
+                    });
 
-            if (exportStock){
-                exportStock.status = Status.Failed;
-                exportStock.reason = error.message;
-                await this.exportStockRepository.save(exportStock);
+                    if (exportStock){
+                        exportStock.status = Status.Failed;
+                        exportStock.reason = error.message;
+                        await this.exportStockRepository.save(exportStock);
 
-                await this.mailService.sendExportEmail(exportStock);
+                        await this.mailService.sendExportEmail(exportStock);
+                    }
+
+                    break;
+                }
+
+                default: throw new InternalServerErrorException("Server Error!");
             }
         } catch (error) {
             throw error;
