@@ -219,10 +219,15 @@ export class ProductService {
         })
     }
 
-    async createOptionValue(optionId: number, createData: CreateOptionValueDTO) {
-        const option = await this.optionRepository.findOneBy({ id: optionId }) as Option;
+    async createOptionValue(productId: string, optionId: number, createData: CreateOptionValueDTO) {
+        const product = await this.productRepository.findOneBy({ id: productId });
+        if (!product) throw new NotFoundException("Product not found! Please try again!");
 
+        const option = await this.optionRepository.findOneBy({ id: optionId }) as Option;
         if (!option) throw new NotFoundException("Option not found! Please try again!");
+
+        const productOption = await this.optionRepository.findOneBy({ id: optionId, product: { id: productId }});
+        if (!productOption) throw new NotFoundException(`Option ${option.name} (ID: ${option.id}) not belongs to Product ${product.name} (ID: ${product.id})`);
 
         for (const value of createData.values) {
             const existedOptionValue = await this.optionValueRepository.findOneBy({ name: value.value_name, option: { id: optionId } });

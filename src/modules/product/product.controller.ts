@@ -88,8 +88,8 @@ export class ProductController {
     @Post(':productId/options/:optionId/values')
     @Auth("create_product_option_value")
     @UsePipes(new ValidationPipe())
-    createOptionValue(@Param('optionId') optionId: number, @Body() createData: CreateOptionValueDTO) {
-        return this.productService.createOptionValue(optionId, createData);
+    createOptionValue(@Param('optionId') optionId: number, @Param('productId') productId: string, @Body() createData: CreateOptionValueDTO) {
+        return this.productService.createOptionValue(productId, optionId, createData);
     }
 
     // PUT METHOD //

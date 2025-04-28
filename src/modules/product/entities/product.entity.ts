@@ -8,7 +8,7 @@ export class Product extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ type: 'varchar',  length: 255, unique: true})
+    @Column({ type: 'varchar',  length: 255 })
     name: string;
 
     @OneToMany(() => Option, (option) => option.product)
