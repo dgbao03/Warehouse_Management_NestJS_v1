@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateRoleDTO, UpdateRoleDTO } from './dtos';
 import { RoleService } from './services/role.service';
-import { Auth } from '../../decorators/decorators.decorator';
+import { Auth } from '../../decorators/permission.decorator';
 
 @Controller('roles')
 export class RoleController {
@@ -17,7 +17,7 @@ export class RoleController {
 
     @Auth("create_role_permission")
     @Post("/:roleId/permissions/:permissionId")
-    addRolePermission(@Param('roleId') roleId: number,@Param('permissionId') permissionId: number) {
+    addRolePermission(@Param('roleId') roleId: number, @Param('permissionId') permissionId: number) {
         return this.roleService.addRolePermission(roleId, permissionId);
     }
 

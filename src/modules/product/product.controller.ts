@@ -5,7 +5,7 @@ import { Product } from './entities/product.entity';
 import { ProductSku } from './entities/product-sku.entity';
 import { BaseSkuDTO, CreateOptionValueDTO, CreateProductDTO, UpdateProductDTO } from './dtos';
 import { UpdateSkuDTO } from './dtos';
-import { Auth } from 'src/decorators/decorators.decorator';
+import { Auth } from '../../decorators/permission.decorator';
 
 @Controller('products')
 export class ProductController {

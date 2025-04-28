@@ -1,7 +1,7 @@
 import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './services/user.service';
 import { CreateUserDTO, SignInPayload } from './dtos';
-import { Auth } from '../../decorators/decorators.decorator';
+import { Auth } from '../../decorators/permission.decorator';
 import { UpdateUserDTO } from './dtos';
 import { DataSource } from 'typeorm';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';

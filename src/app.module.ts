@@ -27,11 +27,15 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => (configService.get('typeorm') as TypeOrmModuleOptions)
     }),
-    BullModule.forRoot({
-      connection: {
-        host: 'localhost',
-        port: 6379
-      }
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        connection: {
+          host: configService.get<string>('REDIS_HOST'),
+          port: configService.get<number>('REDIS_PORT'),
+        }
+      }),
+        inject: [ConfigService]
     }),
     RoleModule,
     PermissionModule,

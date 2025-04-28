@@ -3,7 +3,7 @@ import { ExportService } from './services/export.service';
 import { CreateExportStockDTO, UpdateExportStockDTO } from './dtos';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { ExportStock } from './entities/export.entity';
-import { Auth } from "../../decorators/decorators.decorator"
+import { Auth } from "../../decorators/permission.decorator"
 @Controller('exports')
 export class ExportController {
     constructor(
