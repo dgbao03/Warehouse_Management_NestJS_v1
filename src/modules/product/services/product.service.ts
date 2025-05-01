@@ -38,7 +38,7 @@ export class ProductService {
 
         if (!product) throw new NotFoundException("Product not found! Please try again!");
 
-        return Product.instanceToPlain(product);
+        return product;
     }
 
     async getAllSkus(options: IPaginationOptions, query?: string): Promise<Pagination<ProductSku>> {
