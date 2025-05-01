@@ -102,8 +102,8 @@ export class ProductService {
 
     // POST METHODs //
     async createProduct(createData: CreateProductDTO) {
-        const existedProduct = await this.productRepository.findOneBy({ name: createData.product_name });
-        if (existedProduct) throw new BadRequestException("Product already exists! Please try again!");
+        // const existedProduct = await this.productRepository.findOneBy({ name: createData.product_name });
+        // if (existedProduct) throw new BadRequestException("Product already exists! Please try again!");
 
         return await this.dataSource.transaction(async (entityManager) => {
             const productRepo = entityManager.getRepository(Product);
