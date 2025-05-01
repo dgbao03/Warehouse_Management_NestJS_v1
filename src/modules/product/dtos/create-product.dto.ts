@@ -4,7 +4,7 @@ import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 export class CreateProductDTO {
     @IsString()
     @IsNotEmpty()
-    product_name: string;
+    productName: string;
 
     @IsNotEmpty()
     options: OptionDTO[];
@@ -13,7 +13,7 @@ export class CreateProductDTO {
 class OptionDTO {
     @IsString()
     @IsNotEmpty()
-    option_name: string;
+    optionName: string;
 
     @IsNotEmpty()
     values: OptionValueDTO[];
@@ -22,7 +22,7 @@ class OptionDTO {
 class OptionValueDTO {
     @IsString()
     @IsNotEmpty()
-    value_name: string;
+    valueName: string;
 }
 
 export class BaseSkuDTO {
@@ -51,11 +51,11 @@ class SkuDTO {
 class SkuValueDTO {
     @IsNumber()
     @IsNotEmpty()
-    option_id: number;
+    optionId: number;
 
     @IsNumber()
     @IsNotEmpty()
-    value_id: number;
+    valueId: number;
 }
 
 export class CreateOptionValueDTO {

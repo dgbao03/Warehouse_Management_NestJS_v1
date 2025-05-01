@@ -102,30 +102,27 @@ export class ProductService {
 
     // POST METHODs //
     async createProduct(createData: CreateProductDTO) {
-        // const existedProduct = await this.productRepository.findOneBy({ name: createData.product_name });
-        // if (existedProduct) throw new BadRequestException("Product already exists! Please try again!");
-
         return await this.dataSource.transaction(async (entityManager) => {
             const productRepo = entityManager.getRepository(Product);
             const optionRepo = entityManager.getRepository(Option);
             const optionValueRepo = entityManager.getRepository(OptionValue);
 
-            const { product_name, options } = createData;
+            const { productName, options } = createData;
 
-            const newProduct = this.productRepository.create({ name: product_name });
+            const newProduct = this.productRepository.create({ name: productName });
             await productRepo.save(newProduct);
     
             for (const option of options) {
-                const existedOption = await optionRepo.findOneBy({ name: option.option_name, product: { id: newProduct.id } });
-                if (existedOption) throw new BadRequestException(`Option with name ${option.option_name} already exists in this ${newProduct.name}! Please try again!`);
+                const existedOption = await optionRepo.findOneBy({ name: option.optionName, product: { id: newProduct.id } });
+                if (existedOption) throw new BadRequestException(`Option with name ${option.optionName} already exists in this ${newProduct.name}! Please try again!`);
 
-                const { option_name, values } = option;
-                const newOption = optionRepo.create({ name: option_name, product: newProduct });
+                const { optionName, values } = option;
+                const newOption = optionRepo.create({ name: optionName, product: newProduct });
                 await optionRepo.save(newOption);
     
                 for (const value of values) {
-                    const { value_name } = value;
-                    const newOptionValue = optionValueRepo.create({ name: value_name, option: newOption });
+                    const { valueName } = value;
+                    const newOptionValue = optionValueRepo.create({ name: valueName, option: newOption });
                     await optionValueRepo.save(newOptionValue);
                 }
             }
@@ -166,7 +163,7 @@ export class ProductService {
 
                 // Sorted string of new sku's option-value pairs
                 const newSkuOptionValues = skuValues
-                    .map(sv => `${sv.option_id}-${sv.value_id}`)
+                    .map(sv => `${sv.optionId}-${sv.valueId}`)
                     .sort()
                     .join(',');
 
@@ -194,18 +191,18 @@ export class ProductService {
                 await productSkuRepo.save(newProductSku);
 
                 for (const value of skuValues) {
-                    const option = await optionRepo.findOneBy({ id: value.option_id, product: { id: productId } });
-                    if (!option) throw new BadRequestException(`Option with ID ${value.option_id} not belongs to product ${product.name}`);
+                    const option = await optionRepo.findOneBy({ id: value.optionId, product: { id: productId } });
+                    if (!option) throw new BadRequestException(`Option with ID ${value.optionId} not belongs to product ${product.name}`);
 
-                    const optionValue = await optionValueRepo.findOneBy({ id: value.value_id, option: { id: value.option_id} });
-                    if (!optionValue) throw new BadRequestException(`Option value with ID ${value.value_id} not belongs to option ${option.name}`);
+                    const optionValue = await optionValueRepo.findOneBy({ id: value.valueId, option: { id: value.optionId} });
+                    if (!optionValue) throw new BadRequestException(`Option value with ID ${value.valueId} not belongs to option ${option.name}`);
 
                     const newSkuValue = skuValueRepo.create({
                         skuId: newProductSku.id,
-                        optionId: value.option_id,
-                        valueId: value.value_id,
-                        option: { id: value.option_id},
-                        optionValue: { id: value.value_id}  
+                        optionId: value.optionId,
+                        valueId: value.valueId,
+                        option: { id: value.optionId},
+                        optionValue: { id: value.valueId}  
                     });
 
                     await skuValueRepo.save(newSkuValue);
@@ -230,10 +227,10 @@ export class ProductService {
         if (!productOption) throw new NotFoundException(`Option ${option.name} (ID: ${option.id}) not belongs to Product ${product.name} (ID: ${product.id})`);
 
         for (const value of createData.values) {
-            const existedOptionValue = await this.optionValueRepository.findOneBy({ name: value.value_name, option: { id: optionId } });
-            if (existedOptionValue) throw new BadRequestException(`Option value with name ${value.value_name} already exists! Please try again!`);
+            const existedOptionValue = await this.optionValueRepository.findOneBy({ name: value.valueName, option: { id: optionId } });
+            if (existedOptionValue) throw new BadRequestException(`Option value with name ${value.valueName} already exists! Please try again!`);
 
-            const newValue = this.optionValueRepository.create({ option: option, name: value.value_name });
+            const newValue = this.optionValueRepository.create({ option: option, name: value.valueName });
             await this.optionValueRepository.save(newValue);
         }
 
