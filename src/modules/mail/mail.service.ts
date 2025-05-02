@@ -21,10 +21,12 @@ export class MailService {
                 .select(['user.email'])
                 .getMany();
 
-            const adminEmails = admins.map(admin => admin.email);
+            const emails = admins.map(admin => admin.email);
+
+            emails.push(exportStock.user?.email as string);
 
             await this.mailerService.sendMail({
-                to: adminEmails,
+                to: emails,
                 subject: 'Export Report',
                 template: './templates/export_stock.template.hbs', 
                 context: {
