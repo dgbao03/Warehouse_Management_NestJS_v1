@@ -122,6 +122,9 @@ export class ProductService {
     
                 for (const value of values) {
                     const { valueName } = value;
+                    const existedValue = await optionValueRepo.findOneBy({ name: valueName, option: { id: newOption.id} });
+                    if (existedValue) throw new BadRequestException(`Duplicate Value ${valueName} for Option ${newOption.name}`);
+                    
                     const newOptionValue = optionValueRepo.create({ name: valueName, option: newOption });
                     await optionValueRepo.save(newOptionValue);
                 }
