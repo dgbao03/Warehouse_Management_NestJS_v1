@@ -50,28 +50,15 @@ export class ProductService {
 
         const skuIds = paginatedSkus.items.map(sku => sku.id);
 
-        if (skuIds.length > 0) {
-            const skusWithRelatedData = await this.productSkuRepository
-                .createQueryBuilder('productSku')
-                .leftJoinAndSelect('productSku.skuValues', 'skuValue')
-                .leftJoinAndSelect('skuValue.option', 'option')
-                .leftJoinAndSelect('skuValue.optionValue', 'optionValue')
-                .where('productSku.id IN (:...ids)', { ids: skuIds })
-                .getMany();
+        const skusWithRelatedData = await this.productSkuRepository
+            .createQueryBuilder('productSku')
+            .leftJoinAndSelect('productSku.skuValues', 'skuValue')
+            .leftJoinAndSelect('skuValue.option', 'option')
+            .leftJoinAndSelect('skuValue.optionValue', 'optionValue')
+            .where('productSku.id IN (:...ids)', { ids: skuIds })
+            .getMany();
 
-            const skuValueMap = new Map<number, ProductSku>();
-            skusWithRelatedData.forEach(sku => {
-                skuValueMap.set(sku.id, sku);
-            });
-
-            const itemsWithValues = paginatedSkus.items.map(sku => {
-                return skuValueMap.get(sku.id) || sku;
-            });
-
-            return { ...paginatedSkus, items: itemsWithValues };
-        }
-
-        return paginatedSkus;
+        return { ...paginatedSkus, items: skusWithRelatedData };
     }
 
     async getSkuById(id: number) {
