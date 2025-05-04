@@ -331,6 +331,13 @@ export class ProductService {
             const productSkuRepo = entityManager.getRepository(ProductSku);
             const skuValueRepo = entityManager.getRepository(SkuValue);
 
+            const productSku = await productSkuRepo.findOne({ where: { id: id }, relations: ['exportStockDetails'] });
+            if (productSku) {
+                if (productSku.exportStockDetails.length > 0) throw new BadRequestException(`This Product has been exported! Cannot delete information!`);
+            } else {
+                throw new NotFoundException("Product not found! Please try again!");
+            }
+
             await skuValueRepo.softDelete({ productSku: { id: id } });
             await productSkuRepo.softDelete(id);
         })
