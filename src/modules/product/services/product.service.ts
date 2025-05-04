@@ -101,7 +101,7 @@ export class ProductService {
     
             for (const option of options) {
                 const existedOption = await optionRepo.findOneBy({ name: option.optionName, product: { id: newProduct.id } });
-                if (existedOption) throw new BadRequestException(`Option with name ${option.optionName} already exists in this ${newProduct.name}! Please try again!`);
+                if (existedOption) throw new BadRequestException(`Duplicate Option ${option.optionName} for Product ${newProduct.name}! Please try again!`);
 
                 const { optionName, values } = option;
                 const newOption = optionRepo.create({ name: optionName, product: newProduct });
@@ -110,7 +110,7 @@ export class ProductService {
                 for (const value of values) {
                     const { valueName } = value;
                     const existedValue = await optionValueRepo.findOneBy({ name: valueName, option: { id: newOption.id} });
-                    if (existedValue) throw new BadRequestException(`Duplicate Value ${valueName} for Option ${newOption.name}`);
+                    if (existedValue) throw new BadRequestException(`Duplicate Value ${valueName} for Option ${newOption.name}! Please try again!`);
                     
                     const newOptionValue = optionValueRepo.create({ name: valueName, option: newOption });
                     await optionValueRepo.save(newOptionValue);
