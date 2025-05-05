@@ -166,7 +166,7 @@ export class ProductService {
 
                     if (existingOptionValues === newSkuOptionValues) {
                         throw new BadRequestException(
-                            `A SKU with these option values already exists (SKU Code: ${existingSku.code})`
+                            `Duplicate Variant's Values for ${sku.code} (Duplicate with Code: ${existingSku.code})`
                         );
                     }
                 }
@@ -309,6 +309,9 @@ export class ProductService {
             const optionValueRepo = entityManager.getRepository(OptionValue);
             const productSkuRepo = entityManager.getRepository(ProductSku);
             const skuValueRepo = entityManager.getRepository(SkuValue);
+
+            const product = await productRepo.findOneBy({ id: id });
+            if (!product) throw new NotFoundException("Product Not Found! Please Try Again!");
 
             const productSkus = await productSkuRepo.find({ where: { product: { id } }, relations: ['exportStockDetails'] });
             if (productSkus.some(sku => sku.exportStockDetails.length > 0)) throw new BadRequestException(`This Product has been exported! Cannot delete information!`);
