@@ -81,7 +81,7 @@ The database is structured to support:
 ## License
 MIT License
 
-Copyright (c) 2024 BaoDo
+Copyright (c) 2025 BaoDo
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
