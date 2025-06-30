@@ -1,6 +1,6 @@
-# 📦 Warehouse Management System
+# Warehouse Management System
 
-## 📝 Project Description
+## Project Description
 
 This project involves the development of a backend system to support warehouse operations. The system primarily focuses on:
 
@@ -10,7 +10,7 @@ This project involves the development of a backend system to support warehouse o
 
 ---
 
-## 🗄️ Database Structure
+## Database Structure
 
 The database is structured to support:
 
@@ -20,7 +20,7 @@ The database is structured to support:
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **TypeScript**: Primary programming language.
 - **NestJS**: Framework for building scalable Node.js server-side applications.
@@ -33,9 +33,9 @@ The database is structured to support:
   
 ---
 
-## 📡 API Endpoints
+## API Endpoints
 
-### 👤 User Module
+### User Module
 - `POST /sign-in` – Authenticate user and return tokens.
 - `GET /users` – List all users (Pagination + Search).
 - `GET /users/:id` – Get user details.
@@ -45,7 +45,7 @@ The database is structured to support:
 - `POST /users-roles/:roleId/:userId` – Assign role to user.
 - `DELETE /users-roles/:roleId/:userId` – Remove role from user.
 
-### 🛡️ Role Module
+### Role Module
 - `GET /roles` – List all roles with their permissions and users.
 - `POST /roles` – Create role.
 - `PUT /roles/:id` – Update role.
@@ -53,10 +53,10 @@ The database is structured to support:
 - `POST /roles/:roleId/permissions/:permissionId` – Add permission to role.
 - `DELETE /roles/:roleId/permissions/:permissionId` – Remove permission from role.
 
-### 🔐 Permission Module
+### Permission Module
 - `GET /permissions` – List all permissions.
 
-### 📦 Product Module
+### Product Module
 - `GET /products` – List all products (Pagination + Search).
 - `GET /products/:id` – Get product details (Includes SKUs).
 - `POST /products` – Create new product with options/values.
@@ -71,7 +71,7 @@ The database is structured to support:
 - `GET /products/:productId/options/:optionId/values` – Get values for specific option.
 - `POST /products/:productId/options/:optionId/values` – Add new option value.
 
-### 🚚 Export Module
+### Export Module
 - `GET /exports` – List all exports (Pagination + Search).
 - `GET /exports/:id` – Get detailed export info with SKUs.
 - `POST /exports` – Create new export and update stock levels.
